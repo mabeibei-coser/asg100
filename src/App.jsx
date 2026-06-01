@@ -31,7 +31,13 @@ function App() {
   const [me, setMe] = useState(null)
   const [meReady, setMeReady] = useState(false)
   const [membership, setMembership] = useState(null)
-  const [view, setView] = useState('home')
+  // OAuth 回跳会落到 /asg100/billing：直接打开开通页，让用户付款一气呵成（拿到 openid 后点一次即付）
+  const [view, setView] = useState(
+    typeof window !== 'undefined' &&
+      window.location.pathname.replace(/\/+$/, '').endsWith('/billing')
+      ? 'billing'
+      : 'home'
+  )
 
   const refreshMembership = useCallback(() => {
     fetchMembership().then(setMembership).catch(() => setMembership(null))

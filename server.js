@@ -26,6 +26,7 @@ const {
   buildAuthorizeUrl,
   exchangeCodeForOpenid,
   isSafeFromPath,
+  resolveRedirect,
 } = await import("./lib/wechat-oauth.js");
 
 const PORT = Number(process.env.ASG100_API_PORT || process.env.PORT) || 4002;
@@ -348,7 +349,8 @@ app.get(
       req.session.oauthState = undefined;
       req.session.oauthFrom = undefined;
       await req.session.save();
-      res.redirect(from);
+      // 子路径部署：相对回跳必须补 /asg100 前缀，否则跳到根域名邻居应用 → 404
+      res.redirect(resolveRedirect(from));
     } catch (err) {
       console.error("[oauth/callback] failed:", err);
       res.status(500).send("微信授权失败，请重试");
