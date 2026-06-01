@@ -4,6 +4,7 @@ import {
 } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
+import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined'
 import './styles/index.css'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
@@ -70,13 +71,51 @@ function App() {
   // 未登录
   if (!me) {
     return (
-      <Box sx={{ minHeight: '100vh', py: { xs: 6, md: 10 }, backgroundColor: '#f4f6f9' }}>
-        <Container maxWidth="sm">
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography variant="h4" color="primary.main" sx={{ fontWeight: 700, mb: 1 }}>
-              安全隐患识别 · 会员中心
+      <Box
+        sx={{
+          minHeight: '100dvh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          py: { xs: 5, md: 8 },
+          px: 2,
+          background:
+            'radial-gradient(120% 80% at 50% -10%, rgba(30,58,95,0.07) 0%, rgba(244,246,249,0) 55%), #f4f6f9',
+        }}
+      >
+        <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
+          <Box sx={{ textAlign: 'center', mb: 3.5 }}>
+            <Box
+              sx={{
+                width: 52,
+                height: 52,
+                mx: 'auto',
+                mb: 2,
+                borderRadius: 2.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'linear-gradient(180deg, #244a72 0%, #1e3a5f 100%)',
+                boxShadow: '0 6px 16px rgba(30,58,95,0.25)',
+              }}
+            >
+              <GppGoodOutlinedIcon sx={{ color: '#fff', fontSize: 28 }} />
+            </Box>
+            <Typography
+              sx={{
+                fontSize: { xs: '1.5rem', md: '1.7rem' },
+                fontWeight: 800,
+                color: '#1e3a5f',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.25,
+                mb: 1,
+              }}
+            >
+              安全隐患识别
+              <Box component="span" sx={{ color: '#94a3b8', fontWeight: 600, mx: 0.75 }}>·</Box>
+              会员中心
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography sx={{ color: '#64748b', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 320, mx: 'auto', textWrap: 'balance' }}>
               登录后开通 VIP，解锁台账下载、历史记录与全部安防文档
             </Typography>
           </Box>

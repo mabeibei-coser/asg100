@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Typography, TextField, Button, Alert, Stack } from '@mui/material';
+import { Box, Typography, TextField, Button, Alert, InputAdornment } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import { sendSmsCode, verifySmsCode } from '../utils/api';
 
 const PHONE_RE = /^1\d{10}$/;
+const ACCENT = '#1e3a5f';
 
 /**
  * 手机号 + 短信验证码登录卡片。
@@ -22,6 +23,8 @@ export default function LoginForm({ onLoggedIn }) {
 
   const phoneValid = PHONE_RE.test(phone);
   const codeValid = /^\d{6}$/.test(code);
+  const canSend = phoneValid && !sending && countdown === 0;
+  const canSubmit = phoneValid && codeValid && !loading;
 
   useEffect(() => () => clearInterval(timerRef.current), []);
 
@@ -39,7 +42,7 @@ export default function LoginForm({ onLoggedIn }) {
   };
 
   const handleSend = async () => {
-    if (!phoneValid || sending || countdown > 0) return;
+    if (!canSend) return;
     setSending(true);
     setError(null);
     setInfo(null);
@@ -60,7 +63,7 @@ export default function LoginForm({ onLoggedIn }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!phoneValid || !codeValid || loading) return;
+    if (!canSubmit) return;
     setLoading(true);
     setError(null);
     try {
@@ -73,26 +76,47 @@ export default function LoginForm({ onLoggedIn }) {
     }
   };
 
+  // 输入框统一样式：聚焦时品牌色描边 + 柔和高亮环
+  const fieldSx = {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 2.5,
+      backgroundColor: '#fff',
+      transition: 'box-shadow .2s ease, border-color .2s ease',
+      '& fieldset': { borderColor: 'rgba(15,23,42,0.12)' },
+      '&:hover fieldset': { borderColor: 'rgba(30,58,95,0.35)' },
+      '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(30,58,95,0.10)' },
+      '&.Mui-focused fieldset': { borderColor: ACCENT, borderWidth: '1.5px' },
+    },
+    '& input': { fontSize: '0.95rem' },
+  };
+
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
-      className="glass-card"
       sx={{
-        maxWidth: 420,
+        maxWidth: 400,
         mx: 'auto',
-        p: { xs: 3, md: 4 },
+        px: { xs: 3, md: 3.5 },
+        pt: { xs: 3.5, md: 4 },
+        pb: { xs: 3.5, md: 4 },
         display: 'flex',
         flexDirection: 'column',
-        gap: 2,
+        gap: 2.25,
+        background: '#fff',
+        borderRadius: 4,
+        border: '1px solid rgba(15,23,42,0.06)',
+        boxShadow: '0 8px 32px rgba(30,58,95,0.10), 0 1px 2px rgba(30,58,95,0.04)',
       }}
     >
-      <Box sx={{ textAlign: 'center', mb: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, color: '#1e3a5f', mb: 0.5 }}>
+      <Box sx={{ textAlign: 'center', mb: 0.5 }}>
+        <Typography
+          sx={{ fontSize: '1.25rem', fontWeight: 700, color: ACCENT, letterSpacing: '-0.01em', mb: 0.75 }}
+        >
           手机号登录
         </Typography>
-        <Typography variant="body2" sx={{ color: '#64748b', fontSize: '0.85rem' }}>
-          输入手机号获取验证码，登录后即可使用隐患识别，识别记录自动保存到你的账号
+        <Typography sx={{ color: '#94a3b8', fontSize: '0.8rem', lineHeight: 1.6, px: 1 }}>
+          输入手机号获取验证码，登录后即可使用隐患识别
         </Typography>
       </Box>
 
@@ -105,65 +129,88 @@ export default function LoginForm({ onLoggedIn }) {
         inputMode="numeric"
         autoComplete="tel"
         fullWidth
+        sx={fieldSx}
         error={Boolean(phone) && !phoneValid}
         helperText={phone && !phoneValid ? '手机号格式不正确（应为 1 开头 11 位）' : ' '}
+        FormHelperTextProps={{ sx: { mt: 0.5, ml: 0.5, minHeight: 16 } }}
       />
 
-      <Stack direction="row" spacing={1} alignItems="flex-start">
-        <TextField
-          label="验证码"
-          value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-          disabled={loading}
-          placeholder="6 位验证码"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          fullWidth
-          helperText=" "
-        />
-        <Button
-          onClick={handleSend}
-          disabled={!phoneValid || sending || countdown > 0}
-          variant="outlined"
-          sx={{
-            mt: 0.25,
-            minWidth: 124,
-            py: 1.85,
-            whiteSpace: 'nowrap',
-            color: '#1e3a5f',
-            borderColor: 'rgba(30,58,95,0.5)',
-            '&:hover': { borderColor: '#1e3a5f', background: 'rgba(30,58,95,0.04)' },
-          }}
-        >
-          {countdown > 0 ? `${countdown}s 后重发` : sending ? '发送中...' : '获取验证码'}
-        </Button>
-      </Stack>
+      {/* 验证码：获取按钮内嵌输入框右侧，天然居中对齐，不再左右拼盒子 */}
+      <TextField
+        label="验证码"
+        value={code}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+        disabled={loading}
+        placeholder="6 位验证码"
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        fullWidth
+        sx={fieldSx}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <Box sx={{ width: '1px', height: 22, bgcolor: 'rgba(15,23,42,0.10)', mr: 1.25 }} />
+              <Button
+                onClick={handleSend}
+                disabled={!canSend}
+                disableRipple
+                sx={{
+                  minWidth: 0,
+                  px: 0.75,
+                  py: 0.25,
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                  fontVariantNumeric: 'tabular-nums',
+                  color: canSend ? ACCENT : '#a8b5c4',
+                  transition: 'color .2s ease',
+                  '&:hover': { background: 'transparent', color: '#2c5282' },
+                  '&.Mui-disabled': { color: '#a8b5c4' },
+                }}
+              >
+                {countdown > 0 ? `${countdown}s 后重发` : sending ? '发送中…' : '获取验证码'}
+              </Button>
+            </InputAdornment>
+          ),
+        }}
+      />
 
-      {info && <Alert severity="info">{info}</Alert>}
-      {error && <Alert severity="error">{error}</Alert>}
+      {info && <Alert severity="info" sx={{ borderRadius: 2.5, py: 0.5, alignItems: 'center' }}>{info}</Alert>}
+      {error && <Alert severity="error" sx={{ borderRadius: 2.5, py: 0.5, alignItems: 'center' }}>{error}</Alert>}
 
       <Button
         type="submit"
         variant="contained"
-        disabled={!phoneValid || !codeValid || loading}
-        startIcon={loading ? null : <LoginIcon />}
+        disableElevation
+        disabled={!canSubmit}
+        startIcon={loading ? null : <LoginIcon sx={{ fontSize: 20 }} />}
         sx={{
-          py: 1.5,
-          background: phoneValid && codeValid && !loading ? '#1e3a5f' : 'rgba(0,0,0,0.04)',
-          color: phoneValid && codeValid && !loading ? '#fff' : 'rgba(0,0,0,0.26)',
+          mt: 0.5,
+          py: 1.4,
+          fontSize: '0.98rem',
+          fontWeight: 600,
+          borderRadius: 2.5,
+          letterSpacing: '0.02em',
+          color: '#fff',
+          background: 'linear-gradient(180deg, #244a72 0%, #1e3a5f 100%)',
+          boxShadow: '0 4px 14px rgba(30,58,95,0.28)',
+          transition: 'transform .15s ease, box-shadow .2s ease, background .2s ease',
           '&:hover': {
-            background: phoneValid && codeValid && !loading ? '#2c5282' : 'rgba(0,0,0,0.04)',
+            background: 'linear-gradient(180deg, #2c5282 0%, #244a72 100%)',
+            boxShadow: '0 6px 18px rgba(30,58,95,0.34)',
           },
+          '&:active': { transform: 'scale(0.985)' },
           '&.Mui-disabled': {
-            color: 'rgba(0,0,0,0.26)',
-            background: 'rgba(0,0,0,0.04)',
+            color: '#aeb9c7',
+            background: '#eef1f6',
+            boxShadow: 'none',
           },
         }}
       >
-        {loading ? '登录中...' : '登录'}
+        {loading ? '登录中…' : '登 录'}
       </Button>
 
-      <Typography variant="caption" sx={{ color: '#94a3b8', textAlign: 'center' }}>
+      <Typography sx={{ color: '#a8b5c4', fontSize: '0.75rem', textAlign: 'center', mt: 0.25 }}>
         未注册的手机号将在验证通过后自动创建账号
       </Typography>
     </Box>
