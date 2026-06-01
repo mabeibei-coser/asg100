@@ -22,7 +22,7 @@ export default function Billing({ onPaid, onBack }) {
     fetchPackages()
       .then((d) => {
         setPackages(d.packages);
-        const rec = d.packages.find((p) => p.badge === '推荐') || d.packages[0];
+        const rec = d.packages.find((p) => p.id === 'pkg_12m') || d.packages[0];
         setSelected(rec?.id || null);
       })
       .catch((e) => setError(e.message));
