@@ -176,7 +176,7 @@ function App() {
                 </Button>
               </Box>
 
-              {/* 功能直达：跳到两个独立产品（同域 /a600/ /docs/，cookie 全域共享自动带登录态）*/}
+              {/* 功能直达：跳到两个独立产品（同域 /a600/ /a800/，cookie 全域共享自动带登录态）*/}
               <Stack direction="row" spacing={1.5} sx={{ mb: 2 }}>
                 <Button
                   variant="contained" fullWidth startIcon={<GppGoodOutlinedIcon />}
@@ -187,7 +187,7 @@ function App() {
                 </Button>
                 <Button
                   variant="contained" fullWidth startIcon={<MenuBookOutlinedIcon />}
-                  onClick={() => { window.location.href = '/docs/' }}
+                  onClick={() => { window.location.href = '/a800/' }}
                   sx={{ py: 1.5, bgcolor: '#1e3a5f', fontWeight: 700, '&:hover': { bgcolor: '#2c5282' } }}
                 >
                   安防文档库

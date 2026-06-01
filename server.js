@@ -78,10 +78,11 @@ app.post("/api/sms/send", async (req, res) => {
     getDb()
       .prepare("INSERT INTO sms_codes(phone, code_hash, expires_at, created_at) VALUES (?, ?, ?, ?)")
       .run(phone, codeHash, now + 5 * 60 * 1000, now);
-    // 短信签名必须与短信宝后台报备的一致，否则发送失败。与 A200 共用账户/签名，取值规则也对齐 A200：
-    // SMSBAO_SIGN 的值【自带方括号】（如「【谨世智能】」），代码直接拼、不再额外包【】，否则会双重括号。
+    // 短信宝按「签名+正文模板」整体审核：只有报备通过的模板才会用报备签名发出，
+    // 否则回退到账户默认签名（曾踩坑：asg100 自定义正文未报备 → 签名被换成【云知象限】）。
+    // 与 A200 共用账户，故签名 + 正文都对齐 A200（A200 的模板已报备通过），一字不差复用其模板。
     const sign = process.env.SMSBAO_SIGN || "【谨世智能】";
-    const content = `${sign}您的验证码是 ${code}，5 分钟内有效。如非本人操作请忽略。`;
+    const content = `${sign}您的注册登录验证码为${code}，如非本人操作，请忽略本短信`;
     const sent = await sendSms(phone, content);
     if (!sent.ok) {
       return res.status(502).json({ error: `验证码发送失败：${sent.msg}` });
