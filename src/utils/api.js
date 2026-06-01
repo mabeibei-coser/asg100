@@ -40,6 +40,10 @@ export const fetchMembership = () => http('GET', '/membership/me');
 export const fetchLedger = () => http('GET', '/membership/ledger');
 export const fetchPackages = () => http('GET', '/packages');
 
+// ── 我的历史 ──
+export const fetchHistory = () => http('GET', '/me/history');
+export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`);
+
 // ── 支付 ──
 // 下单。返回 { outTradeNo, jsapi, fakeMode } 或抛 needOauth 错误（401，data.redirectTo）。
 export const createOrder = (packageId, from = '/') => http('POST', '/pay/wechat/order', { packageId, from });

@@ -20,6 +20,7 @@ const {
   grantVipFromOrder,
   getRecentLedger,
 } = await import("./lib/membership.js");
+const { getHazardHistory, getHazardReportDetail } = await import("./lib/history.js");
 const { createJsapiOrder, verifyNotify } = await import("./lib/wechat-pay.js");
 const {
   buildAuthorizeUrl,
@@ -174,6 +175,25 @@ app.get(
 app.get("/api/packages", (req, res) => {
   res.json({ packages: listPackages() });
 });
+
+// ════════════ 我的历史（只读聚合各业务积木的记录）════════════
+
+app.get(
+  "/api/me/history",
+  requireSession(async (req, res) => {
+    const items = getHazardHistory(req.session.phone, 50);
+    res.json({ items });
+  })
+);
+
+app.get(
+  "/api/me/history/hazard/:id",
+  requireSession(async (req, res) => {
+    const detail = getHazardReportDetail(req.session.phone, Number(req.params.id));
+    if (!detail) return res.status(404).json({ error: "记录不存在" });
+    res.json(detail);
+  })
+);
 
 // ════════════ 微信支付 ════════════
 

@@ -8,6 +8,7 @@ import './styles/index.css'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
 import Profile from './components/Profile'
+import History from './components/History'
 import { fetchMe, fetchMembership, logout } from './utils/api'
 
 const fmtDate = (ts) => {
@@ -137,6 +138,9 @@ function App() {
 
               {/* 入口 */}
               <Stack spacing={1.5}>
+                <Button variant="outlined" fullWidth onClick={() => setView('history')} sx={{ py: 1.4, justifyContent: 'flex-start', color: '#1e3a5f', borderColor: '#cbd5e1' }}>
+                  我的识别历史
+                </Button>
                 <Button variant="outlined" fullWidth onClick={() => setView('profile')} sx={{ py: 1.4, justifyContent: 'flex-start', color: '#1e3a5f', borderColor: '#cbd5e1' }}>
                   个人中心 · 购买记录
                 </Button>
@@ -153,6 +157,7 @@ function App() {
 
           {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
           {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} />}
+          {view === 'history' && <History onBack={() => setView('home')} />}
         </Paper>
       </Container>
 
