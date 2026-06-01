@@ -3,6 +3,7 @@ import {
   Container, Box, Button, CircularProgress, IconButton, Tooltip,
 } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
@@ -31,13 +32,17 @@ function App() {
   const [me, setMe] = useState(null)
   const [meReady, setMeReady] = useState(false)
   const [membership, setMembership] = useState(null)
-  // OAuth 回跳会落到 /asg100/billing：直接打开开通页，让用户付款一气呵成（拿到 openid 后点一次即付）
+  // 平台首页对所有人可见、不强制登录；点功能按钮时才校验。
+  // 受保护视图（billing/profile/history）未登录会落到登录界面，登录后就地展开。
+  // OAuth 回跳会落到 /asg100/billing：登录态已在，直接展开开通页，付款一气呵成。
   const [view, setView] = useState(
     typeof window !== 'undefined' &&
       window.location.pathname.replace(/\/+$/, '').endsWith('/billing')
       ? 'billing'
       : 'home'
   )
+  // 跨产品按钮（隐患识别 /a600/、文档库 /a800/）未登录时记下目标，登录后再跳
+  const [pendingNav, setPendingNav] = useState(null)
 
   const refreshMembership = useCallback(() => {
     fetchMembership().then(setMembership).catch(() => setMembership(null))
@@ -58,8 +63,11 @@ function App() {
 
   const handleLoggedIn = (data) => {
     setMe(data)
-    setView('home')
     refreshMembership()
+    // 登录后回到用户原本想去的地方
+    if (pendingNav) { const url = pendingNav; setPendingNav(null); window.location.href = url; return }
+    // 主动点"登录"进来的回首页；进受保护视图（billing/profile/history）的就地展开，不动 view
+    if (view === 'login') setView('home')
   }
 
   const handleLogout = async () => {
@@ -74,6 +82,12 @@ function App() {
     setView('profile')
   }
 
+  // 跳转到同域其它产品：已登录直接去；未登录先登录，登录后再去
+  const goProduct = (url) => {
+    if (me) { window.location.href = url }
+    else { setPendingNav(url); setView('login') }
+  }
+
   if (!meReady) {
     return (
       <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -82,11 +96,23 @@ function App() {
     )
   }
 
-  // 未登录：保持登录壳布局，但 logo 色调改深青绿，与首页设计语言一致
-  if (!me) {
+  const GATED_VIEWS = ['billing', 'profile', 'history']
+  // 登录界面：主动点"登录"(view==='login')，或未登录却进了受保护视图 → 拦在这里登录
+  const showLogin = view === 'login' || (GATED_VIEWS.includes(view) && !me)
+
+  // 登录界面：保持登录壳布局；左上角可返回首页（首页无需登录即可浏览）
+  if (showLogin) {
     return (
       <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 5, md: 8 }, px: 2 }}>
         <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
+          <Box sx={{ mb: 1 }}>
+            <IconButton size="small" onClick={() => { setPendingNav(null); setView('home') }} sx={{
+              color: 'var(--ink-3)',
+              '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
+            }}>
+              <ArrowBackIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Box>
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <Box sx={{
               width: 52, height: 52, mx: 'auto', mb: 2.5,
@@ -138,15 +164,28 @@ function App() {
             </Box>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-            <Box className="num" sx={{ fontSize: '0.84rem', color: 'var(--ink-2)' }}>{me.phone}</Box>
-            <Tooltip title="退出登录">
-              <IconButton size="small" onClick={handleLogout} sx={{
-                color: 'var(--ink-3)', p: 0.6,
-                '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
+            {me ? (
+              <>
+                <Box className="num" sx={{ fontSize: '0.84rem', color: 'var(--ink-2)' }}>{me.phone}</Box>
+                <Tooltip title="退出登录">
+                  <IconButton size="small" onClick={handleLogout} sx={{
+                    color: 'var(--ink-3)', p: 0.6,
+                    '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
+                  }}>
+                    <LogoutIcon sx={{ fontSize: 17 }} />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : (
+              <Button onClick={() => setView('login')} disableElevation sx={{
+                px: 1.75, py: 0.6, fontSize: '0.82rem', fontWeight: 600,
+                borderRadius: 'var(--r-sm)', color: '#fff', background: 'var(--ink)',
+                textTransform: 'none', letterSpacing: '0.01em',
+                '&:hover': { background: '#000' },
               }}>
-                <LogoutIcon sx={{ fontSize: 17 }} />
-              </IconButton>
-            </Tooltip>
+                登录
+              </Button>
+            )}
           </Box>
         </Box>
 
@@ -176,6 +215,7 @@ function App() {
                 title="隐患识别"
                 desc="上传施工现场图片或文字描述，AI 帮你识别隐患点，自动生成台账可下载。"
                 href="/a600/"
+                onActivate={() => goProduct('/a600/')}
               />
               <FeatureCard
                 icon={<LibraryBooksOutlinedIcon sx={{ fontSize: 26 }} />}
@@ -183,6 +223,7 @@ function App() {
                 title="安防文档库"
                 desc="标准 / 制度 / 方案 / 模板，按主题与场景检索。VIP 可下载全部档案。"
                 href="/a800/"
+                onActivate={() => goProduct('/a800/')}
               />
             </Box>
 
@@ -284,11 +325,12 @@ function App() {
 }
 
 // 主角功能卡：icon 左上 / eyebrow 右上 / 标题 + 描述 / CTA + 箭头
-function FeatureCard({ icon, eyebrow, title, desc, href }) {
+function FeatureCard({ icon, eyebrow, title, desc, href, onActivate }) {
   return (
     <Box
       component="a"
       href={href}
+      onClick={(e) => { e.preventDefault(); onActivate?.() }}
       sx={{
         display: 'flex',
         flexDirection: 'column',
