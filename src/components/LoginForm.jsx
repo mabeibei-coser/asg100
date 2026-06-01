@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Typography, TextField, Button, Alert, InputAdornment } from '@mui/material';
+import { Box, Typography, TextField, Button, Alert } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import { sendSmsCode, verifySmsCode } from '../utils/api';
 
@@ -135,45 +135,44 @@ export default function LoginForm({ onLoggedIn }) {
         FormHelperTextProps={{ sx: { mt: 0.5, ml: 0.5, minHeight: 16 } }}
       />
 
-      {/* 验证码：获取按钮内嵌输入框右侧，天然居中对齐，不再左右拼盒子 */}
-      <TextField
-        label="验证码"
-        value={code}
-        onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-        disabled={loading}
-        placeholder="6 位验证码"
-        inputMode="numeric"
-        autoComplete="one-time-code"
-        fullWidth
-        sx={fieldSx}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <Box sx={{ width: '1px', height: 22, bgcolor: 'rgba(15,23,42,0.10)', mr: 1.25 }} />
-              <Button
-                onClick={handleSend}
-                disabled={!canSend}
-                disableRipple
-                sx={{
-                  minWidth: 0,
-                  px: 0.75,
-                  py: 0.25,
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  whiteSpace: 'nowrap',
-                  fontVariantNumeric: 'tabular-nums',
-                  color: canSend ? ACCENT : '#a8b5c4',
-                  transition: 'color .2s ease',
-                  '&:hover': { background: 'transparent', color: '#2c5282' },
-                  '&.Mui-disabled': { color: '#a8b5c4' },
-                }}
-              >
-                {countdown > 0 ? `${countdown}s 后重发` : sending ? '发送中…' : '获取验证码'}
-              </Button>
-            </InputAdornment>
-          ),
-        }}
-      />
+      {/* 验证码 + 获取按钮：flex stretch 让按钮与输入框严格等高对齐 */}
+      <Box sx={{ display: 'flex', gap: 1.25, alignItems: 'stretch' }}>
+        <TextField
+          label="验证码"
+          value={code}
+          onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+          disabled={loading}
+          placeholder="6 位验证码"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          sx={{ ...fieldSx, flex: 1 }}
+        />
+        <Button
+          onClick={handleSend}
+          disabled={!canSend}
+          variant="outlined"
+          disableElevation
+          sx={{
+            flexShrink: 0,
+            minWidth: 116,
+            px: 1.25,
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            borderRadius: 2.5,
+            fontVariantNumeric: 'tabular-nums',
+            color: canSend ? ACCENT : '#94a3b8',
+            borderColor: canSend ? 'rgba(30,58,95,0.45)' : 'rgba(15,23,42,0.15)',
+            background: '#fff',
+            transition: 'all .2s ease',
+            '&:hover': { borderColor: ACCENT, background: 'rgba(30,58,95,0.04)' },
+            '&:active': { transform: 'scale(0.97)' },
+            '&.Mui-disabled': { color: '#a8b5c4', borderColor: 'rgba(15,23,42,0.12)', background: '#fff' },
+          }}
+        >
+          {countdown > 0 ? `${countdown}s 后重发` : sending ? '发送中…' : '获取验证码'}
+        </Button>
+      </Box>
 
       {info && <Alert severity="info" sx={{ borderRadius: 2.5, py: 0.5, alignItems: 'center' }}>{info}</Alert>}
       {error && <Alert severity="error" sx={{ borderRadius: 2.5, py: 0.5, alignItems: 'center' }}>{error}</Alert>}
