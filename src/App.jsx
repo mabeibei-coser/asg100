@@ -5,6 +5,7 @@ import {
 import LogoutIcon from '@mui/icons-material/Logout'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined'
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
 import './styles/index.css'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
@@ -174,6 +175,24 @@ function App() {
                   {isVip ? '续费' : '开通'}
                 </Button>
               </Box>
+
+              {/* 功能直达：跳到两个独立产品（同域 /a600/ /docs/，cookie 全域共享自动带登录态）*/}
+              <Stack direction="row" spacing={1.5} sx={{ mb: 2 }}>
+                <Button
+                  variant="contained" fullWidth startIcon={<GppGoodOutlinedIcon />}
+                  onClick={() => { window.location.href = '/a600/' }}
+                  sx={{ py: 1.5, bgcolor: '#1e3a5f', fontWeight: 700, '&:hover': { bgcolor: '#2c5282' } }}
+                >
+                  隐患识别
+                </Button>
+                <Button
+                  variant="contained" fullWidth startIcon={<MenuBookOutlinedIcon />}
+                  onClick={() => { window.location.href = '/docs/' }}
+                  sx={{ py: 1.5, bgcolor: '#1e3a5f', fontWeight: 700, '&:hover': { bgcolor: '#2c5282' } }}
+                >
+                  安防文档库
+                </Button>
+              </Stack>
 
               {/* 入口 */}
               <Stack spacing={1.5}>
