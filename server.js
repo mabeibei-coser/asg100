@@ -1,4 +1,5 @@
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 
@@ -8,23 +9,37 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 
 const { default: express } = await import("express");
 const { getSession } = await import("./lib/session.js");
-const { getDb, upsertUserByPhone, insertReport } = await import("./lib/db.js");
-const { buildSystemPrompt, parseResult, SCENARIO_LABELS } = await import("./lib/prompts.js");
+const { getDb, upsertUserByPhone } = await import("./lib/db.js");
 const bcrypt = (await import("bcryptjs")).default;
 const { sendSms } = await import("./lib/smsbao.js");
-const { checkSmsLimits, checkVerifyLimit } = await import("./lib/rate-limit.js");
+const { checkSmsLimits, checkVerifyLimit, checkChargeLimits } = await import("./lib/rate-limit.js");
+const { listPackages, getPackage } = await import("./lib/packages.js");
+const {
+  getMembership,
+  ensureMembership,
+  grantVipFromOrder,
+  getRecentLedger,
+} = await import("./lib/membership.js");
+const { createJsapiOrder, verifyNotify } = await import("./lib/wechat-pay.js");
+const {
+  buildAuthorizeUrl,
+  exchangeCodeForOpenid,
+  isSafeFromPath,
+} = await import("./lib/wechat-oauth.js");
 
 const PORT = Number(process.env.ASG100_API_PORT || process.env.PORT) || 4002;
-const IFLYTEK_URL =
-  process.env.IFLYTEK_API_URL ||
-  "https://maas-coding-api.cn-huabei-1.xf-yun.com/v2/chat/completions";
-const IFLYTEK_API_KEY = process.env.IFLYTEK_API_KEY;
-const IFLYTEK_MODEL = process.env.IFLYTEK_MODEL || "astron-code-latest";
+const NOTIFY_PATH = "/api/pay/wechat/notify";
+const OAUTH_CALLBACK_PATH = "/api/wechat/oauth/callback";
+const DEV_PAY_ENABLED = process.env.NODE_ENV !== "production" || process.env.ASG_DEV_PAY === "true";
 
 const app = express();
 app.set("trust proxy", true);
-// 图片 base64（压缩到 1024px / quality 0.8 后约 200-500KB，留足余量）
-app.use(express.json({ limit: "12mb" }));
+
+// notify 路由要原始 bytes 验签，跳过全局 json；其余路由走 json。
+app.use((req, res, next) => {
+  if (req.path === NOTIFY_PATH) return next();
+  express.json({ limit: "2mb" })(req, res, next);
+});
 
 const PHONE_RE = /^1\d{10}$/;
 
@@ -39,7 +54,7 @@ function requireSession(handler) {
   };
 }
 
-// ── 短信验证码：发码（限频 + bcrypt 存码 + 5min 过期）──
+// ════════════ 短信验证码登录 ════════════
 
 app.post("/api/sms/send", async (req, res) => {
   const phone = String(req.body?.phone || "").trim();
@@ -60,9 +75,7 @@ app.post("/api/sms/send", async (req, res) => {
     const codeHash = await bcrypt.hash(code, 10);
     const now = Date.now();
     getDb()
-      .prepare(
-        "INSERT INTO sms_codes(phone, code_hash, expires_at, created_at) VALUES (?, ?, ?, ?)"
-      )
+      .prepare("INSERT INTO sms_codes(phone, code_hash, expires_at, created_at) VALUES (?, ?, ?, ?)")
       .run(phone, codeHash, now + 5 * 60 * 1000, now);
     const content = `【谨世智能】您的验证码是 ${code}，5 分钟内有效。如非本人操作请忽略。`;
     const sent = await sendSms(phone, content);
@@ -76,8 +89,6 @@ app.post("/api/sms/send", async (req, res) => {
   }
 });
 
-// ── 短信验证码：验码 + 登录（验成功即注册/登录，并建会员行）──
-
 app.post("/api/sms/verify", async (req, res) => {
   const phone = String(req.body?.phone || "").trim();
   const code = String(req.body?.code || "").trim();
@@ -86,9 +97,7 @@ app.post("/api/sms/verify", async (req, res) => {
   }
   const attempt = await checkVerifyLimit(phone);
   if (!attempt.ok) {
-    return res
-      .status(429)
-      .json({ error: `验证过于频繁，请 ${attempt.retryAfterSec} 秒后再试` });
+    return res.status(429).json({ error: `验证过于频繁，请 ${attempt.retryAfterSec} 秒后再试` });
   }
   try {
     const db = getDb();
@@ -118,10 +127,7 @@ app.post("/api/sms/verify", async (req, res) => {
     }
 
     const userId = upsertUserByPhone(phone);
-    // 新用户建会员行（时间制 VIP，初始未开通；INSERT OR IGNORE 幂等，老用户跳过）
-    db.prepare(
-      "INSERT OR IGNORE INTO memberships(phone, vip_expire_at, total_paid_cents, updated_at) VALUES (?, 0, 0, ?)"
-    ).run(phone, now);
+    ensureMembership(phone);
 
     const session = await getSession(req, res);
     session.userId = userId;
@@ -144,90 +150,183 @@ app.post("/api/logout", async (req, res) => {
 app.get("/api/me", async (req, res) => {
   const session = await getSession(req, res);
   if (!session.userId) return res.status(401).json({ error: "未登录" });
-  res.json({ userId: session.userId, phone: session.phone });
+  res.json({ userId: session.userId, phone: session.phone, hasOpenid: !!session.openid });
 });
 
-// ── 隐患识别：调讯飞 multimodal + 入库（一次性原子）──
+// ════════════ 会员状态（业务产品"刷卡"契约 + 个人中心）════════════
+
+app.get(
+  "/api/membership/me",
+  requireSession(async (req, res) => {
+    const m = getMembership(req.session.phone);
+    res.json(m);
+  })
+);
+
+app.get(
+  "/api/membership/ledger",
+  requireSession(async (req, res) => {
+    res.json({ ledger: getRecentLedger(req.session.phone, 20) });
+  })
+);
+
+// 套餐列表（公开）
+app.get("/api/packages", (req, res) => {
+  res.json({ packages: listPackages() });
+});
+
+// ════════════ 微信支付 ════════════
 
 app.post(
-  "/api/analyze",
+  "/api/pay/wechat/order",
   requireSession(async (req, res) => {
-    const { scenario, imageBase64, mimeType } = req.body || {};
-    if (!scenario || typeof scenario !== "string") {
-      return res.status(400).json({ error: "缺少 scenario" });
-    }
-    if (!imageBase64 || typeof imageBase64 !== "string") {
-      return res.status(400).json({ error: "缺少图片数据" });
-    }
-    if (!IFLYTEK_API_KEY) {
-      return res.status(500).json({ error: "服务器未配置 AI API key" });
+    const pkg = getPackage(String(req.body?.packageId || ""));
+    if (!pkg) return res.status(400).json({ error: "套餐不存在" });
+
+    // JSAPI 必须 openid；没有就引导走 OAuth
+    if (!req.session.openid) {
+      const from = isSafeFromPath(req.body?.from) ? req.body.from : "/billing";
+      return res.status(401).json({
+        needOauth: true,
+        redirectTo: `/api/wechat/oauth/init?from=${encodeURIComponent(from)}`,
+      });
     }
 
-    const mime = mimeType && /^image\/(jpe?g|png|webp)$/.test(mimeType) ? mimeType : "image/jpeg";
-    const startedAt = Date.now();
+    const ip = req.ip || "unknown";
+    const limit = await checkChargeLimits(req.session.phone, ip);
+    if (!limit.ok) {
+      return res.status(429).json({ error: `操作过于频繁，请 ${limit.retryAfterSec} 秒后再试` });
+    }
 
     try {
-      const upstream = await fetch(IFLYTEK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${IFLYTEK_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: IFLYTEK_MODEL,
-          messages: [
-            { role: "system", content: buildSystemPrompt(scenario) },
-            {
-              role: "user",
-              content: [
-                { type: "image_url", image_url: { url: `data:${mime};base64,${imageBase64}` } },
-                { type: "text", text: "请按照 system prompt 中的检查清单，分析这张照片中能够直接看出的安全隐患。" },
-              ],
-            },
-          ],
-          temperature: 0.3,
-          max_tokens: 4000,
-        }),
-        signal: AbortSignal.timeout(120_000),
+      const db = getDb();
+      const now = Date.now();
+      const outTradeNo = `ASG${now}${crypto.randomBytes(3).toString("hex")}`;
+      db.prepare(
+        `INSERT INTO orders(out_trade_no, package_id, amount_cents, duration_days, status, payer_openid, payer_phone, created_at)
+         VALUES (?, ?, ?, ?, 'pending', ?, ?, ?)`
+      ).run(outTradeNo, pkg.id, pkg.amountCents, pkg.durationDays, req.session.openid, req.session.phone, now);
+
+      const order = await createJsapiOrder({
+        outTradeNo,
+        amountCents: pkg.amountCents,
+        description: `安全隐患识别VIP-${pkg.label}`,
+        notifyUrl: process.env.ASG_WECHAT_NOTIFY_URL || `http://localhost:${PORT}${NOTIFY_PATH}`,
+        openid: req.session.openid,
       });
+      db.prepare("UPDATE orders SET prepay_id = ? WHERE out_trade_no = ?").run(order.prepayId, outTradeNo);
 
-      if (!upstream.ok) {
-        const text = await upstream.text().catch(() => "");
-        console.error("[analyze] iFlytek HTTP", upstream.status, text.slice(0, 300));
-        return res.status(502).json({ error: `AI 请求失败 (${upstream.status})` });
-      }
-
-      const result = await upstream.json();
-      const content = result?.choices?.[0]?.message?.content;
-      if (!content) {
-        return res.status(502).json({ error: "AI 返回内容为空" });
-      }
-
-      const hazards = parseResult(content);
-      const durationMs = Date.now() - startedAt;
-
-      const reportId = insertReport({
-        userId: req.session.userId,
-        userPhone: req.session.phone,
-        createdAt: Date.now(),
-        scenario,
-        scenarioLabel: SCENARIO_LABELS[scenario] || scenario,
-        hazardCount: hazards.length,
-        report: hazards,
-        durationMs,
-        ip: req.ip,
-        userAgent: req.headers["user-agent"] || null,
-        imageBase64,
-        imageMime: mime,
+      res.json({
+        ok: true,
+        outTradeNo,
+        jsapi: order.jsapi,
+        amountCents: pkg.amountCents,
+        durationDays: pkg.durationDays,
+        fakeMode: order.fakeMode,
       });
-
-      res.json({ ok: true, reportId, hazards, durationMs });
     } catch (err) {
-      if (err?.name === "TimeoutError" || err?.name === "AbortError") {
-        return res.status(504).json({ error: "请求超时（120秒），请稍后重试" });
-      }
-      console.error("[analyze] failed:", err);
-      res.status(500).json({ error: "识别失败，请稍后重试" });
+      console.error("[pay/order] failed:", err);
+      res.status(500).json({ error: "下单失败，请稍后重试" });
+    }
+  })
+);
+
+// 查单（前端支付后轮询）
+app.get(
+  "/api/pay/wechat/order/:outTradeNo",
+  requireSession(async (req, res) => {
+    const order = getDb()
+      .prepare("SELECT out_trade_no, status, package_id, duration_days FROM orders WHERE out_trade_no = ? AND payer_phone = ?")
+      .get(req.params.outTradeNo, req.session.phone);
+    if (!order) return res.status(404).json({ error: "订单不存在" });
+    res.json({ outTradeNo: order.out_trade_no, status: order.status });
+  })
+);
+
+// 微信支付回调（验签要原始 bytes，单独挂 express.raw）
+app.post(NOTIFY_PATH, express.raw({ type: "*/*" }), async (req, res) => {
+  const rawBody = Buffer.isBuffer(req.body) ? req.body.toString("utf8") : "";
+  const result = verifyNotify(req.headers, rawBody);
+  if (!result.ok) {
+    console.error("[pay/notify] verify failed:", result.reason, result.detail || "");
+    const status = result.reason === "no-config" ? 500 : 401;
+    return res.status(status).json({ code: "FAIL", message: result.reason });
+  }
+  try {
+    const db = getDb();
+    const { outTradeNo, tradeState } = result.resource;
+    if (tradeState !== "SUCCESS") {
+      return res.status(200).json({ code: "SUCCESS", message: "OK" }); // 非成功也回 200，避免微信重推
+    }
+    const order = db.prepare("SELECT out_trade_no, status FROM orders WHERE out_trade_no = ?").get(outTradeNo);
+    if (!order) {
+      console.error("[pay/notify] order not found:", outTradeNo);
+      return res.status(200).json({ code: "SUCCESS", message: "OK" });
+    }
+    if (order.status !== "paid") {
+      db.prepare("UPDATE orders SET status = 'paid', paid_at = ? WHERE out_trade_no = ?").run(Date.now(), outTradeNo);
+    }
+    grantVipFromOrder(outTradeNo); // 幂等：同订单只开通 1 次
+    res.status(200).json({ code: "SUCCESS", message: "OK" });
+  } catch (err) {
+    console.error("[pay/notify] handle failed:", err);
+    res.status(500).json({ code: "FAIL", message: "internal" });
+  }
+});
+
+// 本地模拟支付成功（fake mode 联调用；生产默认禁用）
+app.post(
+  "/api/dev/mock-paid",
+  requireSession(async (req, res) => {
+    if (!DEV_PAY_ENABLED) return res.status(403).json({ error: "dev mock 已禁用" });
+    const outTradeNo = String(req.body?.outTradeNo || "");
+    const db = getDb();
+    const order = db
+      .prepare("SELECT out_trade_no, status, payer_phone FROM orders WHERE out_trade_no = ?")
+      .get(outTradeNo);
+    if (!order) return res.status(404).json({ error: "订单不存在" });
+    if (order.payer_phone !== req.session.phone) return res.status(403).json({ error: "无权操作此订单" });
+    if (order.status !== "paid") {
+      db.prepare("UPDATE orders SET status = 'paid', paid_at = ? WHERE out_trade_no = ?").run(Date.now(), outTradeNo);
+    }
+    const r = grantVipFromOrder(outTradeNo);
+    res.json({ ok: true, applied: r.applied, vipExpireAt: r.vipExpireAt });
+  })
+);
+
+// ════════════ 微信 OAuth（拿 openid）════════════
+
+app.get(
+  "/api/wechat/oauth/init",
+  requireSession(async (req, res) => {
+    const from = isSafeFromPath(req.query.from) ? req.query.from : "/billing";
+    const state = crypto.randomBytes(16).toString("hex");
+    req.session.oauthState = state;
+    req.session.oauthFrom = from;
+    await req.session.save();
+    const redirectUri = process.env.ASG_OAUTH_REDIRECT_URI || OAUTH_CALLBACK_PATH;
+    res.redirect(buildAuthorizeUrl(redirectUri, state));
+  })
+);
+
+app.get(
+  "/api/wechat/oauth/callback",
+  requireSession(async (req, res) => {
+    const { code, state } = req.query;
+    if (!code || !state || state !== req.session.oauthState) {
+      return res.status(400).send("OAuth state 校验失败，请重试");
+    }
+    try {
+      const { openid } = await exchangeCodeForOpenid(String(code));
+      req.session.openid = openid;
+      const from = isSafeFromPath(req.session.oauthFrom) ? req.session.oauthFrom : "/billing";
+      req.session.oauthState = undefined;
+      req.session.oauthFrom = undefined;
+      await req.session.save();
+      res.redirect(from);
+    } catch (err) {
+      console.error("[oauth/callback] failed:", err);
+      res.status(500).send("微信授权失败，请重试");
     }
   })
 );
@@ -242,7 +341,7 @@ if (process.env.NODE_ENV === "production") {
 app.listen(PORT, () => {
   try {
     getDb();
-    console.log(`[asg100] api server on http://localhost:${PORT}`);
+    console.log(`[asg100] 会员中心 api on http://localhost:${PORT}`);
   } catch (err) {
     console.error("[asg100] DB 初始化失败:", err);
   }
