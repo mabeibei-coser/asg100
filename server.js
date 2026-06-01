@@ -20,7 +20,7 @@ const {
   grantVipFromOrder,
   getRecentLedger,
 } = await import("./lib/membership.js");
-const { getHazardHistory, getHazardReportDetail } = await import("./lib/history.js");
+const { getHazardHistory, getHazardReportDetail, getDocDownloadHistory } = await import("./lib/history.js");
 const { createJsapiOrder, verifyNotify } = await import("./lib/wechat-pay.js");
 const {
   buildAuthorizeUrl,
@@ -181,8 +181,9 @@ app.get("/api/packages", (req, res) => {
 app.get(
   "/api/me/history",
   requireSession(async (req, res) => {
-    const items = getHazardHistory(req.session.phone, 50);
-    res.json({ items });
+    const hazards = getHazardHistory(req.session.phone, 50);
+    const downloads = getDocDownloadHistory(req.session.phone, 50);
+    res.json({ items: hazards, downloads });
   })
 );
 

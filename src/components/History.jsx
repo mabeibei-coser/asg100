@@ -21,11 +21,14 @@ const LEVEL_COLOR = { 高: '#dc2626', 中: '#d97706', 低: '#059669' };
  */
 export default function History({ onBack }) {
   const [items, setItems] = useState(null);
+  const [downloads, setDownloads] = useState([]);
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
   useEffect(() => {
-    fetchHistory().then((d) => setItems(d.items)).catch(() => setItems([]));
+    fetchHistory()
+      .then((d) => { setItems(d.items); setDownloads(d.downloads || []); })
+      .catch(() => setItems([]));
   }, []);
 
   const openDetail = async (id) => {
@@ -109,6 +112,22 @@ export default function History({ onBack }) {
             </Card>
           ))}
         </Stack>
+      )}
+
+      {/* 文档下载记录 */}
+      {downloads.length > 0 && (
+        <Box sx={{ mt: 3 }}>
+          <Typography sx={{ fontWeight: 600, color: '#1e3a5f', mb: 1 }}>文档下载记录</Typography>
+          <Divider sx={{ mb: 1 }} />
+          <Stack spacing={1}>
+            {downloads.map((d) => (
+              <Box key={`doc-${d.id}`} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" sx={{ color: '#334155', fontSize: '0.85rem' }}>{d.title}</Typography>
+                <Typography variant="caption" sx={{ color: '#94a3b8' }}>{fmtTime(d.createdAt)}</Typography>
+              </Box>
+            ))}
+          </Stack>
+        </Box>
       )}
 
       {detailLoading && (
