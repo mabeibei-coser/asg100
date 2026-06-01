@@ -4,19 +4,21 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
 import App from './App.jsx'
 import './styles/index.css'
 
+// MUI theme：跟 src/styles/index.css 的 CSS var 保持同步（设计语言 v2 — 墨黑 + 深青绿 + 暖白纸感）
 const theme = createTheme({
   palette: {
     mode: 'light',
-    primary: { main: '#1e3a5f' },
-    secondary: { main: '#475569' },
-    background: { default: '#f4f6f9', paper: '#ffffff' },
-    text: { primary: '#1a1a2e', secondary: '#64748b' },
+    primary: { main: '#0f766e', dark: '#0d6660', light: '#ccfbf1', contrastText: '#ffffff' },
+    secondary: { main: '#525866' },
+    background: { default: '#fafaf7', paper: '#ffffff' },
+    text: { primary: '#0f1419', secondary: '#525866', disabled: '#9098a5' },
+    divider: '#e6e6e1',
   },
   typography: {
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, 'Inter', 'Noto Sans SC', sans-serif",
-    h4: { fontWeight: 700, letterSpacing: '-0.02em' },
-    h5: { fontWeight: 600, letterSpacing: '-0.01em' },
-    h6: { fontWeight: 600, letterSpacing: '-0.01em' },
+    fontFamily: "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif",
+    h4: { fontWeight: 700, letterSpacing: '-0.025em' },
+    h5: { fontWeight: 650, letterSpacing: '-0.018em' },
+    h6: { fontWeight: 600, letterSpacing: '-0.012em' },
   },
   components: {
     MuiOutlinedInput: {

@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
-  Container, Box, Typography, Button, CircularProgress, Paper, Chip, Stack, IconButton, Tooltip,
+  Container, Box, Button, CircularProgress, IconButton, Tooltip,
 } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined'
-import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined'
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
+import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
+import HistoryIcon from '@mui/icons-material/History'
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import './styles/index.css'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
@@ -19,7 +21,12 @@ const fmtDate = (ts) => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-// asg100 = 安全隐患域会员中心。视图：login → home（会员主页）→ billing / profile
+const daysLeft = (ts) => {
+  if (!ts) return 0
+  return Math.max(0, Math.ceil((ts - Date.now()) / 86400000))
+}
+
+// asg100 = 安全隐患域会员中心。设计语言 v2：墨黑 + 深青绿 + 暖白纸感
 function App() {
   const [me, setMe] = useState(null)
   const [meReady, setMeReady] = useState(false)
@@ -63,62 +70,35 @@ function App() {
 
   if (!meReady) {
     return (
-      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f4f6f9' }}>
-        <CircularProgress size={32} sx={{ color: '#1e3a5f' }} />
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <CircularProgress size={28} sx={{ color: 'var(--accent)' }} />
       </Box>
     )
   }
 
-  // 未登录
+  // 未登录：保持登录壳布局，但 logo 色调改深青绿，与首页设计语言一致
   if (!me) {
     return (
-      <Box
-        sx={{
-          minHeight: '100dvh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          py: { xs: 5, md: 8 },
-          px: 2,
-          background:
-            'radial-gradient(120% 80% at 50% -10%, rgba(30,58,95,0.07) 0%, rgba(244,246,249,0) 55%), #f4f6f9',
-        }}
-      >
+      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 5, md: 8 }, px: 2 }}>
         <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
-          <Box sx={{ textAlign: 'center', mb: 3.5 }}>
-            <Box
-              sx={{
-                width: 52,
-                height: 52,
-                mx: 'auto',
-                mb: 2,
-                borderRadius: 2.5,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'linear-gradient(180deg, #244a72 0%, #1e3a5f 100%)',
-                boxShadow: '0 6px 16px rgba(30,58,95,0.25)',
-              }}
-            >
-              <GppGoodOutlinedIcon sx={{ color: '#fff', fontSize: 28 }} />
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Box sx={{
+              width: 52, height: 52, mx: 'auto', mb: 2.5,
+              borderRadius: 'var(--r-md)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'linear-gradient(180deg, #134e4a 0%, #0f766e 100%)',
+              boxShadow: '0 8px 22px rgba(15, 118, 110, 0.32)',
+            }}>
+              <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 27 }} />
             </Box>
-            <Typography
-              sx={{
-                fontSize: { xs: '1.5rem', md: '1.7rem' },
-                fontWeight: 800,
-                color: '#1e3a5f',
-                letterSpacing: '-0.02em',
-                lineHeight: 1.25,
-                mb: 1,
-              }}
-            >
+            <h1 className="h-display" style={{ fontSize: '1.55rem', marginBottom: 8 }}>
               安全隐患识别
-              <Box component="span" sx={{ color: '#94a3b8', fontWeight: 600, mx: 0.75 }}>·</Box>
+              <Box component="span" sx={{ color: 'var(--ink-3)', mx: 0.75, fontWeight: 500 }}>·</Box>
               会员中心
-            </Typography>
-            <Typography sx={{ color: '#64748b', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 320, mx: 'auto', textWrap: 'balance' }}>
+            </h1>
+            <p style={{ color: 'var(--ink-2)', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 320, margin: '0 auto', textWrap: 'balance' }}>
               登录后开通 VIP，解锁台账下载、历史记录与全部安防文档
-            </Typography>
+            </p>
           </Box>
           <LoginForm onLoggedIn={handleLoggedIn} />
         </Container>
@@ -127,103 +107,281 @@ function App() {
   }
 
   const isVip = membership?.isVip
+  const left = isVip ? daysLeft(membership.vipExpireAt) : 0
 
   return (
-    <Box sx={{ minHeight: '100vh', py: { xs: 2, md: 4 }, backgroundColor: '#f4f6f9' }}>
-      <Container maxWidth="sm">
-        {/* 顶部：手机号 + 退出 */}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 0.5, mb: 1 }}>
-          <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.75rem' }}>{me.phone}</Typography>
-          <Tooltip title="退出登录">
-            <IconButton size="small" onClick={handleLogout} sx={{ color: '#94a3b8', p: 0.5 }}>
-              <LogoutIcon sx={{ fontSize: 16 }} />
-            </IconButton>
-          </Tooltip>
+    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 5 } }}>
+      <Container maxWidth="md">
+        {/* ═══ 顶部 nav：左 logo + 标题；右 手机号 + 退出 ═══ */}
+        <Box component="nav" className="rise" sx={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          mb: { xs: 4, md: 6 },
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box sx={{
+              width: 32, height: 32, borderRadius: 'var(--r-sm)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'linear-gradient(180deg, #134e4a 0%, #0f766e 100%)',
+              boxShadow: '0 4px 12px rgba(15, 118, 110, 0.25)',
+              flexShrink: 0,
+            }}>
+              <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 18 }} />
+            </Box>
+            <Box sx={{ fontSize: '0.95rem', fontWeight: 650, color: 'var(--ink)', letterSpacing: '-0.012em', lineHeight: 1.2 }}>
+              安全隐患域 · 会员中心
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+            <Box className="num" sx={{ fontSize: '0.84rem', color: 'var(--ink-2)' }}>{me.phone}</Box>
+            <Tooltip title="退出登录">
+              <IconButton size="small" onClick={handleLogout} sx={{
+                color: 'var(--ink-3)', p: 0.6,
+                '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
+              }}>
+                <LogoutIcon sx={{ fontSize: 17 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
 
-        <Box sx={{ textAlign: 'center', mb: 3 }}>
-          <Typography variant="h4" color="primary.main" sx={{ fontWeight: 700, fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
-            会员中心
-            <Chip label="安全隐患域" size="small" sx={{ ml: 1, bgcolor: 'primary.main', color: '#fff', height: 20, fontSize: '0.7rem', verticalAlign: 'middle' }} />
-          </Typography>
-        </Box>
+        {view === 'home' && (
+          <>
+            {/* ═══ 欢迎区：左对齐，破对称 ═══ */}
+            <Box className="rise rise-1" component="header" sx={{ mb: { xs: 4, md: 5 } }}>
+              <div className="h-eyebrow" style={{ marginBottom: 10 }}>welcome back</div>
+              <h1 className="h-display" style={{ marginBottom: 12 }}>
+                识别风险 · 查阅安防档
+              </h1>
+              <p style={{ color: 'var(--ink-2)', fontSize: '0.95rem', lineHeight: 1.65, maxWidth: 560 }}>
+                登录态在 asg100 全域通用，点击下方功能直接进入对应产品，无需重登。
+              </p>
+            </Box>
 
-        <Paper className="glass-card fade-in-up" sx={{ p: { xs: 2, md: 3 } }}>
-          {view === 'home' && (
-            <Box>
-              {/* VIP 状态条 */}
-              <Box
-                sx={{
-                  p: 2, mb: 2, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  background: isVip ? 'linear-gradient(135deg,#1e3a5f,#2c5282)' : '#f1f5f9',
-                  color: isVip ? '#fff' : '#64748b',
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <WorkspacePremiumIcon sx={{ color: isVip ? '#f59e0b' : '#cbd5e1' }} />
-                  <Box>
-                    <Typography sx={{ fontWeight: 700 }}>{isVip ? 'VIP 会员' : '普通用户'}</Typography>
-                    <Typography variant="caption" sx={{ opacity: 0.85 }}>
-                      {isVip ? `有效期至 ${fmtDate(membership.vipExpireAt)}` : '尚未开通 VIP'}
-                    </Typography>
+            {/* ═══ 主角：两张功能卡 ═══ */}
+            <Box className="rise rise-2" component="section" sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+              gap: { xs: 2, md: 3 },
+              mb: { xs: 3, md: 4 },
+            }}>
+              <FeatureCard
+                icon={<ShieldOutlinedIcon sx={{ fontSize: 26 }} />}
+                eyebrow="A600"
+                title="隐患识别"
+                desc="上传施工现场图片或文字描述，AI 帮你识别隐患点，自动生成台账可下载。"
+                href="/a600/"
+              />
+              <FeatureCard
+                icon={<LibraryBooksOutlinedIcon sx={{ fontSize: 26 }} />}
+                eyebrow="A800"
+                title="安防文档库"
+                desc="标准 / 制度 / 方案 / 模板，按主题与场景检索。VIP 可下载全部档案。"
+                href="/a800/"
+              />
+            </Box>
+
+            {/* ═══ VIP 横条（次要）═══ */}
+            <Box className="rise rise-3" component="section" sx={{
+              p: { xs: 2, md: 2.25 },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2,
+              mb: { xs: 4, md: 5 },
+              borderRadius: 'var(--r-lg)',
+              border: '1px solid',
+              borderColor: isVip ? 'rgba(176, 138, 62, 0.28)' : 'var(--line)',
+              background: isVip
+                ? 'linear-gradient(135deg, #fdf6e4 0%, #f7ecca 100%)'
+                : 'var(--bg-elev)',
+              boxShadow: 'var(--shadow-sm)',
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.75, minWidth: 0 }}>
+                <Box sx={{
+                  width: 38, height: 38, borderRadius: 'var(--r-sm)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: isVip ? 'rgba(176, 138, 62, 0.18)' : 'var(--bg-mute)',
+                  color: isVip ? 'var(--gold)' : 'var(--ink-3)',
+                  flexShrink: 0,
+                }}>
+                  <WorkspacePremiumIcon sx={{ fontSize: 21 }} />
+                </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Box sx={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.25 }}>
+                    {isVip ? 'VIP 会员' : '普通用户'}
+                  </Box>
+                  <Box sx={{ fontSize: '0.8rem', color: 'var(--ink-2)', mt: 0.4, lineHeight: 1.45 }}>
+                    {isVip ? (
+                      <>剩余 <span className="num" style={{ color: 'var(--ink)', fontWeight: 600 }}>{left}</span> 天 · 到期 <span className="num">{fmtDate(membership.vipExpireAt)}</span></>
+                    ) : (
+                      '尚未开通 · 升级后可下载台账与全部安防文档'
+                    )}
                   </Box>
                 </Box>
-                <Button
-                  variant="contained" size="small" onClick={() => setView('billing')}
-                  sx={{ bgcolor: isVip ? 'rgba(255,255,255,0.2)' : '#1e3a5f', '&:hover': { bgcolor: isVip ? 'rgba(255,255,255,0.3)' : '#2c5282' } }}
-                >
-                  {isVip ? '续费' : '开通'}
-                </Button>
               </Box>
-
-              {/* 功能直达：跳到两个独立产品（同域 /a600/ /a800/，cookie 全域共享自动带登录态）*/}
-              <Stack direction="row" spacing={1.5} sx={{ mb: 2 }}>
-                <Button
-                  variant="contained" fullWidth startIcon={<GppGoodOutlinedIcon />}
-                  onClick={() => { window.location.href = '/a600/' }}
-                  sx={{ py: 1.5, bgcolor: '#1e3a5f', fontWeight: 700, '&:hover': { bgcolor: '#2c5282' } }}
-                >
-                  隐患识别
-                </Button>
-                <Button
-                  variant="contained" fullWidth startIcon={<MenuBookOutlinedIcon />}
-                  onClick={() => { window.location.href = '/a800/' }}
-                  sx={{ py: 1.5, bgcolor: '#1e3a5f', fontWeight: 700, '&:hover': { bgcolor: '#2c5282' } }}
-                >
-                  安防文档库
-                </Button>
-              </Stack>
-
-              {/* 入口 */}
-              <Stack spacing={1.5}>
-                <Button variant="outlined" fullWidth onClick={() => setView('history')} sx={{ py: 1.4, justifyContent: 'flex-start', color: '#1e3a5f', borderColor: '#cbd5e1' }}>
-                  我的识别历史
-                </Button>
-                <Button variant="outlined" fullWidth onClick={() => setView('profile')} sx={{ py: 1.4, justifyContent: 'flex-start', color: '#1e3a5f', borderColor: '#cbd5e1' }}>
-                  个人中心 · 购买记录
-                </Button>
-                <Button variant="outlined" fullWidth onClick={() => setView('billing')} sx={{ py: 1.4, justifyContent: 'flex-start', color: '#1e3a5f', borderColor: '#cbd5e1' }}>
-                  开通 / 续费 VIP
-                </Button>
-              </Stack>
-
-              <Typography variant="caption" sx={{ display: 'block', mt: 2, color: '#94a3b8', textAlign: 'center' }}>
-                隐患识别、安防文档库等功能登录后即可在各产品内使用，VIP 状态全域通用
-              </Typography>
+              <Button
+                onClick={() => setView('billing')}
+                disableElevation
+                sx={{
+                  px: 2.25, py: 0.95,
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  borderRadius: 'var(--r-sm)',
+                  color: '#fff',
+                  background: 'var(--ink)',
+                  flexShrink: 0,
+                  textTransform: 'none',
+                  letterSpacing: '0.01em',
+                  transition: 'transform .12s ease, background .2s ease, box-shadow .2s ease',
+                  '&:hover': { background: '#000', boxShadow: '0 4px 12px rgba(15, 20, 25, 0.18)' },
+                  '&:active': { transform: 'scale(0.97)' },
+                }}
+              >
+                {isVip ? '续费' : '开通 VIP'}
+              </Button>
             </Box>
-          )}
 
-          {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
-          {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} />}
-          {view === 'history' && <History onBack={() => setView('home')} />}
-        </Paper>
+            {/* ═══ 管理项：文字链组 ═══ */}
+            <Box className="rise rise-4" component="nav" sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: { xs: 1.5, md: 2.5 },
+              alignItems: 'center',
+              justifyContent: 'center',
+              mb: 5,
+            }}>
+              <TextLink onClick={() => setView('history')} icon={<HistoryIcon sx={{ fontSize: 14 }} />}>
+                我的识别历史
+              </TextLink>
+              <Dot />
+              <TextLink onClick={() => setView('profile')}>个人中心 · 购买记录</TextLink>
+            </Box>
+          </>
+        )}
+
+        {view !== 'home' && (
+          <Box className="surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
+            {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
+            {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} />}
+            {view === 'history' && <History onBack={() => setView('home')} />}
+          </Box>
+        )}
+
+        <Box component="footer" sx={{ textAlign: 'center', mt: 5, pb: 3 }}>
+          <Box sx={{ fontSize: '0.72rem', color: 'var(--ink-3)', letterSpacing: '0.04em' }}>
+            谨世 ASG 人工智能实验室 出品
+          </Box>
+        </Box>
       </Container>
+    </Box>
+  )
+}
 
-      <Box sx={{ textAlign: 'center', mt: 4, py: 2, color: 'text.secondary' }}>
-        <Typography variant="caption" sx={{ display: 'block' }}>谨世ASG人工智能实验室出品</Typography>
+// 主角功能卡：icon 左上 / eyebrow 右上 / 标题 + 描述 / CTA + 箭头
+function FeatureCard({ icon, eyebrow, title, desc, href }) {
+  return (
+    <Box
+      component="a"
+      href={href}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        p: { xs: 2.5, md: 2.75 },
+        borderRadius: 'var(--r-lg)',
+        background: 'var(--bg-elev)',
+        border: '1px solid var(--line)',
+        textDecoration: 'none',
+        color: 'inherit',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'transform .25s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow .25s ease, border-color .2s ease',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle at top right, rgba(15, 118, 110, 0.07) 0%, transparent 55%)',
+          opacity: 0,
+          transition: 'opacity .3s ease',
+          pointerEvents: 'none',
+        },
+        '&:hover': {
+          borderColor: 'rgba(15, 118, 110, 0.32)',
+          boxShadow: '0 14px 30px rgba(15, 118, 110, 0.13), 0 2px 6px rgba(15, 20, 25, 0.04)',
+          transform: 'translateY(-2px)',
+          '& .feature-arrow': { transform: 'translate(3px, -3px)' },
+          '&::before': { opacity: 1 },
+        },
+        '&:active': { transform: 'translateY(0)' },
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
+        <Box sx={{
+          width: 42, height: 42, borderRadius: 'var(--r-sm)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'var(--accent-soft)',
+          color: 'var(--accent)',
+          flexShrink: 0,
+        }}>
+          {icon}
+        </Box>
+        <Box className="h-eyebrow num" sx={{ mt: 0.7 }}>{eyebrow}</Box>
+      </Box>
+      <Box sx={{ position: 'relative', zIndex: 1 }}>
+        <h2 className="h-section" style={{ marginBottom: 6, fontSize: '1.18rem', fontWeight: 700, letterSpacing: '-0.018em' }}>
+          {title}
+        </h2>
+        <p style={{ fontSize: '0.875rem', color: 'var(--ink-2)', lineHeight: 1.6, textWrap: 'pretty' }}>
+          {desc}
+        </p>
+      </Box>
+      <Box sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.6,
+        mt: 'auto',
+        pt: 0.5,
+        fontSize: '0.85rem',
+        fontWeight: 600,
+        color: 'var(--accent)',
+        position: 'relative',
+        zIndex: 1,
+      }}>
+        进入功能
+        <ArrowOutwardIcon className="feature-arrow" sx={{ fontSize: 16, transition: 'transform .25s cubic-bezier(0.2, 0.7, 0.2, 1)' }} />
       </Box>
     </Box>
   )
+}
+
+function TextLink({ children, icon, onClick }) {
+  return (
+    <Box
+      component="button"
+      onClick={onClick}
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.5,
+        background: 'none',
+        border: 0,
+        padding: '4px 2px',
+        cursor: 'pointer',
+        fontSize: '0.88rem',
+        color: 'var(--ink-2)',
+        fontFamily: 'inherit',
+        transition: 'color .2s ease',
+        '&:hover': { color: 'var(--accent)' },
+      }}
+    >
+      {icon}
+      {children}
+    </Box>
+  )
+}
+
+function Dot() {
+  return <Box sx={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-4)' }} />
 }
 
 export default App

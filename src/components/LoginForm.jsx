@@ -4,7 +4,10 @@ import LoginIcon from '@mui/icons-material/Login';
 import { sendSmsCode, verifySmsCode } from '../utils/api';
 
 const PHONE_RE = /^1\d{10}$/;
-const ACCENT = '#1e3a5f';
+// 与全站设计语言 v2 同步：深青绿（见 src/styles/index.css 的 --accent）
+const ACCENT = '#0f766e';
+const ACCENT_DARK = '#134e4a';
+const ACCENT_RGB = '15, 118, 110';
 
 /**
  * 手机号 + 短信验证码登录卡片。
@@ -83,8 +86,8 @@ export default function LoginForm({ onLoggedIn }) {
       backgroundColor: '#fff',
       transition: 'box-shadow .2s ease, border-color .2s ease',
       '& fieldset': { borderColor: 'rgba(15,23,42,0.12)' },
-      '&:hover fieldset': { borderColor: 'rgba(30,58,95,0.35)' },
-      '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(30,58,95,0.10)' },
+      '&:hover fieldset': { borderColor: 'rgba(15, 118, 110, 0.35)' },
+      '&.Mui-focused': { boxShadow: '0 0 0 3px rgba(15, 118, 110, 0.10)' },
       '&.Mui-focused fieldset': { borderColor: ACCENT, borderWidth: '1.5px' },
     },
     '& input': { fontSize: '0.95rem' },
@@ -106,7 +109,7 @@ export default function LoginForm({ onLoggedIn }) {
         background: '#fff',
         borderRadius: 4,
         border: '1px solid rgba(15,23,42,0.06)',
-        boxShadow: '0 8px 32px rgba(30,58,95,0.10), 0 1px 2px rgba(30,58,95,0.04)',
+        boxShadow: '0 8px 32px rgba(15, 118, 110, 0.10), 0 1px 2px rgba(15, 118, 110, 0.04)',
       }}
     >
       <Box sx={{ textAlign: 'center', mb: 0.5 }}>
@@ -162,10 +165,10 @@ export default function LoginForm({ onLoggedIn }) {
             borderRadius: 2.5,
             fontVariantNumeric: 'tabular-nums',
             color: canSend ? ACCENT : '#94a3b8',
-            borderColor: canSend ? 'rgba(30,58,95,0.45)' : 'rgba(15,23,42,0.15)',
+            borderColor: canSend ? 'rgba(15, 118, 110, 0.45)' : 'rgba(15,23,42,0.15)',
             background: '#fff',
             transition: 'all .2s ease',
-            '&:hover': { borderColor: ACCENT, background: 'rgba(30,58,95,0.04)' },
+            '&:hover': { borderColor: ACCENT, background: 'rgba(15, 118, 110, 0.04)' },
             '&:active': { transform: 'scale(0.97)' },
             '&.Mui-disabled': { color: '#a8b5c4', borderColor: 'rgba(15,23,42,0.12)', background: '#fff' },
           }}
@@ -191,12 +194,12 @@ export default function LoginForm({ onLoggedIn }) {
           borderRadius: 2.5,
           letterSpacing: '0.02em',
           color: '#fff',
-          background: 'linear-gradient(180deg, #244a72 0%, #1e3a5f 100%)',
-          boxShadow: '0 4px 14px rgba(30,58,95,0.28)',
+          background: `linear-gradient(180deg, ${ACCENT} 0%, ${ACCENT_DARK} 100%)`,
+          boxShadow: `0 4px 14px rgba(${ACCENT_RGB}, 0.28)`,
           transition: 'transform .15s ease, box-shadow .2s ease, background .2s ease',
           '&:hover': {
-            background: 'linear-gradient(180deg, #2c5282 0%, #244a72 100%)',
-            boxShadow: '0 6px 18px rgba(30,58,95,0.34)',
+            background: `linear-gradient(180deg, #157d75 0%, ${ACCENT} 100%)`,
+            boxShadow: `0 6px 18px rgba(${ACCENT_RGB}, 0.34)`,
           },
           '&:active': { transform: 'scale(0.985)' },
           '&.Mui-disabled': {

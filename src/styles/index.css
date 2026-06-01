@@ -1,50 +1,175 @@
+/* ════════════════════════════════════════════════════════
+   asg100 设计语言 v2 — 严肃可信 + 中文温度
+   去除 AI 通病：紫蓝渐变 / equal cards / 政企蓝 / 冷灰底
+   ════════════════════════════════════════════════════════ */
+
 :root {
-  --bg-primary: #f4f6f9;
-  --card-bg: #ffffff;
-  --accent: #1e3a5f;
-  --accent-light: #2563eb;
-  --text-primary: #1a1a2e;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --positive: #1b5e20;
-  --negative: #c62828;
+  /* —— 中性面 —— */
+  --bg: #fafaf7;            /* 暖白，纸感 */
+  --bg-elev: #ffffff;       /* 卡片表面 */
+  --bg-mute: #f4f3ee;       /* 次级填充 / hover 底 */
+
+  /* —— 文字 —— */
+  --ink: #0f1419;           /* 主文字，近黑但带蓝调 */
+  --ink-2: #525866;         /* 次要文字 */
+  --ink-3: #9098a5;         /* 弱文字 / 占位 */
+  --ink-4: #c5c8cf;         /* 极弱 / 分隔线文字 */
+
+  /* —— 主色（深青绿，传达"稳定/可信/警惕"，与"安全隐患"主题契合）—— */
+  --accent: #0f766e;
+  --accent-2: #0d6660;      /* hover/pressed */
+  --accent-soft: #ccfbf1;   /* tag 底色等 */
+  --accent-ink: #134e4a;    /* accent 文字 on soft */
+
+  /* —— 状态 —— */
+  --gold: #b08a3e;          /* VIP 金，暗调高级 */
+  --gold-soft: #fdf6e4;
+  --danger: #b8472d;        /* 克制的红橙 */
+  --danger-soft: #fce8e1;
+  --info: #4a5e8a;
+  --info-soft: #eaedf4;
+
+  /* —— 边框 —— */
+  --line: #e6e6e1;          /* 主分隔线 */
+  --line-strong: #d4d4cf;   /* 重分隔线 */
+
+  /* —— 阴影：带主色 hue，避免纯黑塑料感 —— */
+  --shadow-sm: 0 1px 2px rgba(15, 118, 110, 0.04), 0 1px 1px rgba(15, 20, 25, 0.03);
+  --shadow-md: 0 2px 8px rgba(15, 118, 110, 0.06), 0 1px 2px rgba(15, 20, 25, 0.04);
+  --shadow-lg: 0 12px 32px rgba(15, 118, 110, 0.10), 0 2px 8px rgba(15, 20, 25, 0.05);
+  --shadow-focus: 0 0 0 3px rgba(15, 118, 110, 0.18);
+
+  /* —— 圆角 —— */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+
+  /* —— 间距 token，对齐 8px 节奏 —— */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, 'Inter', 'Noto Sans SC', sans-serif;
-  background: #f4f6f9;
+  font-family:
+    'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont,
+    'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
 }
 
-/* monospace 数字字体栈,SF Mono 优先(Mac),Cascadia / Consolas 兜底(Win)。
-   用 !important 压过 MUI Typography 注入的 fontFamily */
-.font-mono-num {
-  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Consolas', 'Menlo', 'Monaco', ui-monospace, monospace !important;
+/* —— 微噪点，给屏幕加一层"纸感"，破"塑料平面" —— */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.022 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+}
+
+/* 内容堆叠在噪点之上 */
+#root { position: relative; z-index: 1; }
+
+/* —— 数字字体类：等宽对齐 —— */
+.num {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Consolas', ui-monospace, monospace !important;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
+  letter-spacing: -0.01em;
 }
 
+/* —— 标题等级 —— */
+.h-display {
+  font-family: 'Inter Tight', 'PingFang SC', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.h-section {
+  font-family: 'Inter Tight', 'PingFang SC', system-ui, sans-serif;
+  font-weight: 650;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+.h-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* —— 通用 surface（卡片/面）—— */
+.surface {
+  background: var(--bg-elev);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+
+/* —— 入场动画 —— */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.rise-1 { animation-delay: 0.05s; }
+.rise-2 { animation-delay: 0.12s; }
+.rise-3 { animation-delay: 0.19s; }
+.rise-4 { animation-delay: 0.26s; }
+
+/* —— 焦点环（无障碍）—— */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--r-sm);
+}
+
+/* —— 滚动条 —— */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
+
+/* —— 选中文本 —— */
+::selection { background: var(--accent-soft); color: var(--accent-ink); }
+
+/* —— 旧 class 兼容（仍被子组件引用，逐步替换）—— */
 .glass-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .glass-card:hover {
-  border-color: rgba(30, 58, 95, 0.12);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
 }
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+.fade-in-up { animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.font-mono-num {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Consolas', ui-monospace, monospace !important;
+  font-variant-numeric: tabular-nums;
 }
-.fade-in-up { animation: fadeInUp 0.5s ease-out; }
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f1f1; }
-::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
