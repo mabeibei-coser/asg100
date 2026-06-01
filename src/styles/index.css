@@ -1,0 +1,50 @@
+:root {
+  --bg-primary: #f4f6f9;
+  --card-bg: #ffffff;
+  --accent: #1e3a5f;
+  --accent-light: #2563eb;
+  --text-primary: #1a1a2e;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --positive: #1b5e20;
+  --negative: #c62828;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, 'Inter', 'Noto Sans SC', sans-serif;
+  background: #f4f6f9;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+/* monospace 数字字体栈,SF Mono 优先(Mac),Cascadia / Consolas 兜底(Win)。
+   用 !important 压过 MUI Typography 注入的 fontFamily */
+.font-mono-num {
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Consolas', 'Menlo', 'Monaco', ui-monospace, monospace !important;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.glass-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+.glass-card:hover {
+  border-color: rgba(30, 58, 95, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.5s ease-out; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
