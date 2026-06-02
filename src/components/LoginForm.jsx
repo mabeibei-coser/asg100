@@ -101,8 +101,8 @@ export default function LoginForm({ onLoggedIn }) {
         maxWidth: 400,
         mx: 'auto',
         px: { xs: 3, md: 3.5 },
-        pt: { xs: 3.5, md: 4 },
-        pb: { xs: 3.5, md: 4 },
+        pt: { xs: 3, md: 3.5 },
+        pb: { xs: 2.75, md: 3 },
         display: 'flex',
         flexDirection: 'column',
         gap: 2.25,
@@ -211,10 +211,6 @@ export default function LoginForm({ onLoggedIn }) {
       >
         {loading ? '登录中…' : '登 录'}
       </Button>
-
-      <Typography sx={{ color: '#a8b5c4', fontSize: '0.75rem', textAlign: 'center', mt: 0.25 }}>
-        未注册的手机号将在验证通过后自动创建账号
-      </Typography>
     </Box>
   );
 }

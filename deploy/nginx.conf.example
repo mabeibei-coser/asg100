@@ -37,8 +37,8 @@
         client_max_body_size 12m;
     }
 
-    # ── 安防文档库 Z200（端口 4003）──
-    location /docs/ {
+    # ── 安防文档库 A800（端口 4003）──
+    location /a800/ {
         proxy_pass http://127.0.0.1:4003/;
         proxy_http_version 1.1;
         proxy_set_header Host $host;

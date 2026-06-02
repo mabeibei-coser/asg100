@@ -27,6 +27,9 @@ const daysLeft = (ts) => {
   return Math.max(0, Math.ceil((ts - Date.now()) / 86400000))
 }
 
+// 手机号中间 4 位打码：18621933756 → 186****3756
+const maskPhone = (p) => (p ? String(p).replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : p)
+
 // asg100 = 安全隐患域会员中心。设计语言 v2：墨黑 + 深青绿 + 暖白纸感
 function App() {
   const [me, setMe] = useState(null)
@@ -113,7 +116,7 @@ function App() {
               <ArrowBackIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Box sx={{ textAlign: 'center', mb: 2.5 }}>
             <Box sx={{
               width: 52, height: 52, mx: 'auto', mb: 2.5,
               borderRadius: 'var(--r-md)',
@@ -124,9 +127,7 @@ function App() {
               <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 27 }} />
             </Box>
             <h1 className="h-display" style={{ fontSize: '1.55rem', marginBottom: 8 }}>
-              安全隐患识别
-              <Box component="span" sx={{ color: 'var(--ink-3)', mx: 0.75, fontWeight: 500 }}>·</Box>
-              会员中心
+              欢迎使用安全隐患识别平台
             </h1>
             <p style={{ color: 'var(--ink-2)', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 320, margin: '0 auto', textWrap: 'balance' }}>
               登录后开通 VIP，解锁台账下载、历史记录与全部安防文档
@@ -166,7 +167,7 @@ function App() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
             {me ? (
               <>
-                <Box className="num" sx={{ fontSize: '0.84rem', color: 'var(--ink-2)' }}>{me.phone}</Box>
+                <Box className="num" sx={{ fontSize: '0.84rem', color: 'var(--ink-2)' }}>{maskPhone(me.phone)}</Box>
                 <Tooltip title="退出登录">
                   <IconButton size="small" onClick={handleLogout} sx={{
                     color: 'var(--ink-3)', p: 0.6,
