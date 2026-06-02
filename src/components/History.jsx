@@ -46,7 +46,6 @@ function FieldLabel({ children }) {
  */
 export default function History({ onBack, onBuy, isVip }) {
   const [items, setItems] = useState(null);
-  const [downloads, setDownloads] = useState([]);
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -54,7 +53,7 @@ export default function History({ onBack, onBuy, isVip }) {
 
   useEffect(() => {
     fetchHistory()
-      .then((d) => { setItems(d.items); setDownloads(d.downloads || []); })
+      .then((d) => { setItems(d.items); })
       .catch(() => setItems([]));
   }, []);
 
@@ -346,31 +345,6 @@ export default function History({ onBack, onBuy, isVip }) {
             </Box>
           ))}
         </Stack>
-      )}
-
-      {/* 文档下载记录 */}
-      {downloads.length > 0 && (
-        <Box sx={{ mt: 4 }}>
-          <h3 className="h-section" style={{ fontSize: '0.95rem', marginBottom: 12 }}>文档下载记录</h3>
-          <Stack divider={<Box sx={{ height: '1px', background: 'var(--line)' }} />}>
-            {downloads.map((d) => (
-              <Box key={`doc-${d.id}`} sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                py: 1.25,
-                px: 0.25,
-              }}>
-                <Box sx={{ fontSize: '0.86rem', color: 'var(--ink)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', pr: 1.5 }}>
-                  {d.title}
-                </Box>
-                <Box className="num" sx={{ fontSize: '0.74rem', color: 'var(--ink-3)', flexShrink: 0 }}>
-                  {fmtTime(d.createdAt)}
-                </Box>
-              </Box>
-            ))}
-          </Stack>
-        </Box>
       )}
 
       {detailLoading && (

@@ -109,7 +109,7 @@ function App() {
   // 登录界面：保持登录壳布局；左上角可返回首页（首页无需登录即可浏览）
   if (showLogin) {
     return (
-      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 5, md: 8 }, pb: { xs: 10, md: 12 }, px: 2 }}>
+      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 6, md: 8 }, pb: { xs: 11, md: 12 }, px: 2 }}>
         <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
           <Box sx={{ mb: 1 }}>
             <IconButton size="small" onClick={() => { setPendingNav(null); setView('home') }} sx={{
@@ -139,8 +139,9 @@ function App() {
           <LoginForm onLoggedIn={handleLoggedIn} />
         </Container>
         <BottomNav
-          active="mine"
+          active={view === 'history' ? 'records' : 'mine'}
           onGoHome={() => { setPendingNav(null); setView('home') }}
+          onGoHistory={() => setView('history')}
           onGoProfile={() => setView('profile')}
         />
       </Box>
@@ -155,6 +156,7 @@ function App() {
       <HomeLanding
         onGoIdentify={() => goProduct('/a600/')}
         onGoResources={() => goProduct('/a800/')}
+        onGoHistory={() => setView('history')}
         onGoProfile={() => setView('profile')}
       />
     )
@@ -340,23 +342,23 @@ function App() {
         </Box>
       </Container>
       <BottomNav
-        active={view === 'home' ? 'home' : 'mine'}
+        active={view === 'history' ? 'records' : view === 'home' ? 'home' : 'mine'}
         onGoHome={() => setView('home')}
+        onGoHistory={() => setView('history')}
         onGoProfile={() => setView('profile')}
       />
     </Box>
   )
 }
 
-function HomeLanding({ onGoIdentify, onGoResources, onGoProfile }) {
+function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) {
   return (
     <Box className="home-page">
       <main className="home-shell rise">
         <header className="home-title-wrap">
           <h1 className="home-title">
             <span className="home-title-main">安全隐患识别</span>
-            <span className="home-title-version"><em>5.0</em></span>
-            <span className="home-title-badge">专业版</span>
+            <span className="home-title-version"><em>5.0</em><span className="home-title-badge">专业版</span></span>
           </h1>
           <div className="home-title-ornament" aria-hidden="true">
             <span />
@@ -382,13 +384,13 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoProfile }) {
           />
         </section>
 
-        <BottomNav active="home" onGoHome={() => {}} onGoProfile={onGoProfile} />
+        <BottomNav active="home" onGoHome={() => {}} onGoHistory={onGoHistory} onGoProfile={onGoProfile} />
       </main>
     </Box>
   )
 }
 
-function BottomNav({ active, onGoHome, onGoProfile }) {
+function BottomNav({ active, onGoHome, onGoHistory, onGoProfile }) {
   return (
     <nav className="home-bottom-nav" aria-label="底部导航">
       <button
@@ -398,6 +400,14 @@ function BottomNav({ active, onGoHome, onGoProfile }) {
       >
         <HomeRoundedIcon />
         <span>首页</span>
+      </button>
+      <button
+        className={`home-nav-item${active === 'records' ? ' is-active' : ''}`}
+        type="button"
+        onClick={onGoHistory}
+      >
+        <HistoryIcon />
+        <span>记录</span>
       </button>
       <button
         className={`home-nav-item${active === 'mine' ? ' is-active' : ''}`}
