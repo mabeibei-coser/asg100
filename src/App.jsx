@@ -311,7 +311,7 @@ function App() {
           <Box className="surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
             {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
             {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} />}
-            {view === 'history' && <History onBack={() => setView('home')} />}
+            {view === 'history' && <History onBack={() => setView('home')} onBuy={() => setView('billing')} isVip={isVip} />}
           </Box>
         )}
 

@@ -20,7 +20,7 @@ const {
   grantVipFromOrder,
   getRecentLedger,
 } = await import("./lib/membership.js");
-const { getHazardHistory, getHazardReportDetail, getDocDownloadHistory } = await import("./lib/history.js");
+const { getHazardHistory, getHazardReportDetail, getDocDownloadHistory, getRecentHazardReports } = await import("./lib/history.js");
 const { createJsapiOrder, verifyNotify } = await import("./lib/wechat-pay.js");
 const {
   buildAuthorizeUrl,
@@ -198,6 +198,114 @@ app.get(
     const detail = getHazardReportDetail(req.session.phone, Number(req.params.id));
     if (!detail) return res.status(404).json({ error: "记录不存在" });
     res.json(detail);
+  })
+);
+
+// 下载最近 N 天台账（VIP 专享）：服务端用 exceljs 生成 xlsx，并嵌入每条记录的现场照片。
+// 与 A600 应用内台账同列；台账下载是 VIP 付费点（与 A600 + 会员中心文案一致）。
+app.get(
+  "/api/me/history/ledger",
+  requireSession(async (req, res) => {
+    const m = getMembership(req.session.phone);
+    if (!m?.isVip) {
+      return res.status(403).json({ error: "开通 VIP 后可下载台账", needVip: true });
+    }
+    const days = Math.min(Math.max(parseInt(req.query.days, 10) || 3, 1), 31);
+    const since = Date.now() - days * 86400000;
+    const reports = getRecentHazardReports(req.session.phone, since);
+    if (!reports.length) {
+      return res.status(404).json({ error: `最近 ${days} 天没有识别记录` });
+    }
+
+    const fmtTime = (ts) => {
+      const d = new Date(ts);
+      const p = (n) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    };
+    const stripYuan = (t) => String(t || "").replace(/\s*元\s*$/, "").trim();
+    const cleanFix = (t) =>
+      String(t || "")
+        .split("\n")
+        .map((s) => s.replace(/^\d+[\.\、\s]*/, "").trim())
+        .filter(Boolean)
+        .map((s, i) => `${i + 1}. ${s}`)
+        .join("\n");
+
+    try {
+      const ExcelJS = (await import("exceljs")).default;
+      const wb = new ExcelJS.Workbook();
+      const ws = wb.addWorksheet("安全隐患台账");
+      ws.columns = [
+        { header: "日期", key: "date", width: 18 },
+        { header: "场景", key: "scenario", width: 16 },
+        { header: "序号", key: "idx", width: 6 },
+        { header: "隐患名称", key: "name", width: 22 },
+        { header: "等级", key: "level", width: 8 },
+        { header: "具体描述", key: "desc", width: 40 },
+        { header: "涉及规范", key: "reg", width: 26 },
+        { header: "整改建议", key: "fix", width: 36 },
+        { header: "预算经费", key: "budget", width: 14 },
+        { header: "现场照片", key: "photo", width: 22 },
+      ];
+      const head = ws.getRow(1);
+      head.font = { bold: true };
+      head.alignment = { vertical: "middle", horizontal: "center" };
+      head.height = 22;
+
+      for (const rep of reports) {
+        const hazards = Array.isArray(rep.hazards) && rep.hazards.length ? rep.hazards : [null];
+        const firstRowNum = ws.rowCount + 1;
+        hazards.forEach((h, i) => {
+          const row = ws.addRow({
+            date: fmtTime(rep.createdAt),
+            scenario: rep.scenarioLabel,
+            idx: h ? i + 1 : "",
+            name: h ? h.hazard_name || "" : "（未发现隐患）",
+            level: h && h.hazard_level ? `${h.hazard_level}风险` : "",
+            desc: h ? h.hazard_description || "" : "",
+            reg: h ? h.relevant_regulations || "" : "",
+            fix: h ? cleanFix(h.rectification_suggestions) : "",
+            budget: h ? stripYuan(h.estimated_budget) : "",
+            photo: "",
+          });
+          row.alignment = { vertical: "top", wrapText: true };
+        });
+        // 现场照片：每条记录嵌一次，放在该记录首行的「现场照片」列（第 10 列，0-indexed = 9）。
+        // exceljs 仅支持 png/jpeg；webp 等跳过（留空），不编造。
+        if (rep.imageBase64 && /image\/(jpe?g|png)/i.test(rep.imageMime || "")) {
+          const ext = /png/i.test(rep.imageMime) ? "png" : "jpeg";
+          try {
+            const imgId = wb.addImage({
+              buffer: Buffer.from(rep.imageBase64, "base64"),
+              extension: ext,
+            });
+            ws.getRow(firstRowNum).height = 96;
+            ws.addImage(imgId, {
+              tl: { col: 9, row: firstRowNum - 1 },
+              ext: { width: 150, height: 110 },
+              editAs: "oneCell",
+            });
+          } catch (e) {
+            console.error("[ledger] 嵌图失败:", e?.message || e);
+          }
+        }
+      }
+
+      const buf = await wb.xlsx.writeBuffer();
+      const fname = `安全隐患台账_近${days}天_${fmtTime(Date.now()).replace(/[:\s-]/g, "")}.xlsx`;
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename*=UTF-8''${encodeURIComponent(fname)}`
+      );
+      res.send(Buffer.from(buf));
+    } catch (err) {
+      console.error("[ledger] 生成失败:", err);
+      res.status(500).json({ error: "台账生成失败，请稍后重试" });
+    }
   })
 );
 

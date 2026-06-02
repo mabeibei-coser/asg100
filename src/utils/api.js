@@ -44,6 +44,38 @@ export const fetchPackages = () => http('GET', '/packages');
 export const fetchHistory = () => http('GET', '/me/history');
 export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`);
 
+/**
+ * 下载最近 N 天台账（Excel，含现场照片）。VIP 专享。
+ * 成功 → 触发浏览器下载；失败 → 抛带 status/data 的 Error（403 needVip / 404 无记录）。
+ */
+export async function downloadHistoryLedger(days = 3) {
+  const res = await fetch(`${API_BASE}/me/history/ledger?days=${days}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    let data = {};
+    try { data = await res.json(); } catch { /* 非 JSON 错误体 */ }
+    const err = new Error(data?.error || `下载失败 (${res.status})`);
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+  const blob = await res.blob();
+  const cd = res.headers.get('Content-Disposition') || '';
+  let fname = '安全隐患台账.xlsx';
+  const m = /filename\*=UTF-8''([^;]+)/.exec(cd);
+  if (m) { try { fname = decodeURIComponent(m[1]); } catch { /* keep default */ } }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
 // ── 支付 ──
 // 下单。返回 { outTradeNo, jsapi, fakeMode } 或抛 needOauth 错误（401，data.redirectTo）。
 export const createOrder = (packageId, from = '/') => http('POST', '/pay/wechat/order', { packageId, from });
