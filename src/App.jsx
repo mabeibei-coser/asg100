@@ -9,7 +9,12 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
 import HistoryIcon from '@mui/icons-material/History'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
+import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined'
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined'
 import './styles/index.css'
+import homeFireAiBg from './assets/home-fire-ai-bg.png'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
 import Profile from './components/Profile'
@@ -141,6 +146,16 @@ function App() {
 
   const isVip = membership?.isVip
   const left = isVip ? daysLeft(membership.vipExpireAt) : 0
+
+  if (view === 'home') {
+    return (
+      <HomeLanding
+        onGoIdentify={() => goProduct('/a600/')}
+        onGoResources={() => goProduct('/a800/')}
+        onGoProfile={() => setView('profile')}
+      />
+    )
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 5 } }}>
@@ -322,6 +337,58 @@ function App() {
         </Box>
       </Container>
     </Box>
+  )
+}
+
+function HomeLanding({ onGoIdentify, onGoResources, onGoProfile }) {
+  return (
+    <Box className="home-page">
+      <main className="home-shell rise">
+        <header className="home-title-wrap">
+          <h1 className="home-title">
+            <span className="home-title-main">安全隐患识别</span>
+            <span className="home-title-sub"><em>5.0</em> 专业版</span>
+          </h1>
+        </header>
+
+        <section className="fire-ai-hero" aria-label="AI 消防隐患自动检查">
+          <img className="fire-ai-hero-image" src={homeFireAiBg} alt="" />
+        </section>
+
+        <section className="home-actions" aria-label="主要功能">
+          <HomeActionCard
+            icon={<LocalFireDepartmentOutlinedIcon sx={{ fontSize: 38 }} />}
+            label="隐患识别"
+            onClick={onGoIdentify}
+          />
+          <HomeActionCard
+            icon={<FolderOutlinedIcon sx={{ fontSize: 38 }} />}
+            label="资料大全"
+            onClick={onGoResources}
+          />
+        </section>
+
+        <nav className="home-bottom-nav" aria-label="底部导航">
+          <button className="home-nav-item is-active" type="button">
+            <HomeRoundedIcon sx={{ fontSize: 30 }} />
+            <span>首页</span>
+          </button>
+          <button className="home-nav-item" type="button" onClick={onGoProfile}>
+            <PersonOutlineOutlinedIcon sx={{ fontSize: 30 }} />
+            <span>我的</span>
+          </button>
+        </nav>
+      </main>
+    </Box>
+  )
+}
+
+function HomeActionCard({ icon, label, onClick }) {
+  return (
+    <button className="home-action-card" type="button" onClick={onClick}>
+      <span className="home-action-icon">{icon}</span>
+      <span className="home-action-label">{label}</span>
+    </button>
   )
 }
 
