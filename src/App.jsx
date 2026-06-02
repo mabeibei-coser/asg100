@@ -109,7 +109,7 @@ function App() {
   // 登录界面：保持登录壳布局；左上角可返回首页（首页无需登录即可浏览）
   if (showLogin) {
     return (
-      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 6, md: 8 }, pb: { xs: 11, md: 12 }, px: 2 }}>
+      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 6, md: 8 }, px: 2 }}>
         <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
           <Box sx={{ mb: 1 }}>
             <IconButton size="small" onClick={() => { setPendingNav(null); setView('home') }} sx={{
@@ -138,12 +138,6 @@ function App() {
           </Box>
           <LoginForm onLoggedIn={handleLoggedIn} />
         </Container>
-        <BottomNav
-          active={view === 'history' ? 'records' : 'mine'}
-          onGoHome={() => { setPendingNav(null); setView('home') }}
-          onGoHistory={() => setView('history')}
-          onGoProfile={() => setView('profile')}
-        />
       </Box>
     )
   }
