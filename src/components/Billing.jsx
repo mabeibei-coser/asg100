@@ -154,7 +154,7 @@ export default function Billing({ onPaid, onBack }) {
       {info && <Alert severity="info" sx={{ mb: 2, borderRadius: 'var(--r-sm)' }}>{info}</Alert>}
       {error && <Alert severity="error" sx={{ mb: 2, borderRadius: 'var(--r-sm)' }}>{error}</Alert>}
 
-      {/* 立即开通：墨黑主按钮，跟首页 VIP 横条按钮一致 */}
+      {/* 立即支付：墨黑主按钮，跟首页 VIP 横条按钮一致 */}
       <Button
         fullWidth
         onClick={handlePay}
@@ -181,7 +181,7 @@ export default function Billing({ onPaid, onBack }) {
           },
         }}
       >
-        {loading ? '处理中…' : '立即开通'}
+        {loading ? '处理中…' : '立即支付'}
       </Button>
 
       <Box sx={{ textAlign: 'center', mt: 1.5, fontSize: '0.74rem', color: 'var(--ink-3)' }}>

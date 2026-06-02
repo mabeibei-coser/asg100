@@ -88,25 +88,35 @@ export const mockPaid = (outTradeNo) => http('POST', '/dev/mock-paid', { outTrad
  */
 export function invokeWechatPay(jsapi) {
   return new Promise((resolve, reject) => {
-    if (typeof window.WeixinJSBridge === 'undefined') {
+    const invoke = () => {
+      window.WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        {
+          appId: jsapi.appId,
+          timeStamp: jsapi.timeStamp,
+          nonceStr: jsapi.nonceStr,
+          package: jsapi.package,
+          signType: jsapi.signType,
+          paySign: jsapi.paySign,
+        },
+        (r) => {
+          if (r.err_msg === 'get_brand_wcpay_request:ok') resolve();
+          else reject(new Error(r.err_msg || '支付取消'));
+        }
+      );
+    };
+    // 微信里 WeixinJSBridge 是异步注入的，页面刚打开那几秒还是 undefined。
+    // 直接判 undefined 会把"还没注入完"误当成"不在微信"——首次点击被踢去 fake 分支、
+    // 表现为没反应，过几秒 bridge 就绪后第二次点才成功（即"需点两下"）。
+    if (typeof window.WeixinJSBridge !== 'undefined') {
+      invoke();
+    } else if (/MicroMessenger/i.test(navigator.userAgent)) {
+      // 在微信内但 bridge 尚未就绪 → 等就绪事件再调起
+      document.addEventListener('WeixinJSBridgeReady', invoke, { once: true });
+    } else {
+      // 真正的非微信环境（桌面 / 本地联调）→ 让前端走 fake 分支
       reject(new Error('NOT_IN_WECHAT'));
-      return;
     }
-    window.WeixinJSBridge.invoke(
-      'getBrandWCPayRequest',
-      {
-        appId: jsapi.appId,
-        timeStamp: jsapi.timeStamp,
-        nonceStr: jsapi.nonceStr,
-        package: jsapi.package,
-        signType: jsapi.signType,
-        paySign: jsapi.paySign,
-      },
-      (r) => {
-        if (r.err_msg === 'get_brand_wcpay_request:ok') resolve();
-        else reject(new Error(r.err_msg || '支付取消'));
-      }
-    );
   });
 }
 

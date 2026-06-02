@@ -11,8 +11,6 @@ import HistoryIcon from '@mui/icons-material/History'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
-import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined'
-import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined'
 import './styles/index.css'
 import homeFireAiBg from './assets/home-fire-ai-bg.png'
 import LoginForm from './components/LoginForm'
@@ -111,7 +109,7 @@ function App() {
   // 登录界面：保持登录壳布局；左上角可返回首页（首页无需登录即可浏览）
   if (showLogin) {
     return (
-      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 5, md: 8 }, px: 2 }}>
+      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 5, md: 8 }, pb: { xs: 10, md: 12 }, px: 2 }}>
         <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
           <Box sx={{ mb: 1 }}>
             <IconButton size="small" onClick={() => { setPendingNav(null); setView('home') }} sx={{
@@ -140,6 +138,11 @@ function App() {
           </Box>
           <LoginForm onLoggedIn={handleLoggedIn} />
         </Container>
+        <BottomNav
+          active="mine"
+          onGoHome={() => { setPendingNav(null); setView('home') }}
+          onGoProfile={() => setView('profile')}
+        />
       </Box>
     )
   }
@@ -158,7 +161,7 @@ function App() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 5 } }}>
+    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 5 }, pb: { xs: 11, md: 12 } }}>
       <Container maxWidth="md">
         {/* ═══ 顶部 nav：左 logo + 标题；右 手机号 + 退出 ═══ */}
         <Box component="nav" className="rise" sx={{
@@ -325,7 +328,7 @@ function App() {
         {view !== 'home' && (
           <Box className="surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
             {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
-            {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} />}
+            {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} />}
             {view === 'history' && <History onBack={() => setView('home')} onBuy={() => setView('billing')} isVip={isVip} />}
           </Box>
         )}
@@ -336,6 +339,11 @@ function App() {
           </Box>
         </Box>
       </Container>
+      <BottomNav
+        active={view === 'home' ? 'home' : 'mine'}
+        onGoHome={() => setView('home')}
+        onGoProfile={() => setView('profile')}
+      />
     </Box>
   )
 }
@@ -347,8 +355,14 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoProfile }) {
         <header className="home-title-wrap">
           <h1 className="home-title">
             <span className="home-title-main">安全隐患识别</span>
-            <span className="home-title-sub"><em>5.0</em> 专业版</span>
+            <span className="home-title-version"><em>5.0</em></span>
+            <span className="home-title-badge">专业版</span>
           </h1>
+          <div className="home-title-ornament" aria-hidden="true">
+            <span />
+            <ShieldOutlinedIcon />
+            <span />
+          </div>
         </header>
 
         <section className="fire-ai-hero" aria-label="AI 消防隐患自动检查">
@@ -357,29 +371,84 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoProfile }) {
 
         <section className="home-actions" aria-label="主要功能">
           <HomeActionCard
-            icon={<LocalFireDepartmentOutlinedIcon sx={{ fontSize: 38 }} />}
+            icon={<ScanFireIcon />}
             label="隐患识别"
             onClick={onGoIdentify}
           />
           <HomeActionCard
-            icon={<FolderOutlinedIcon sx={{ fontSize: 38 }} />}
+            icon={<DocsFolderIcon />}
             label="资料大全"
             onClick={onGoResources}
           />
         </section>
 
-        <nav className="home-bottom-nav" aria-label="底部导航">
-          <button className="home-nav-item is-active" type="button">
-            <HomeRoundedIcon sx={{ fontSize: 30 }} />
-            <span>首页</span>
-          </button>
-          <button className="home-nav-item" type="button" onClick={onGoProfile}>
-            <PersonOutlineOutlinedIcon sx={{ fontSize: 30 }} />
-            <span>我的</span>
-          </button>
-        </nav>
+        <BottomNav active="home" onGoHome={() => {}} onGoProfile={onGoProfile} />
       </main>
     </Box>
+  )
+}
+
+function BottomNav({ active, onGoHome, onGoProfile }) {
+  return (
+    <nav className="home-bottom-nav" aria-label="底部导航">
+      <button
+        className={`home-nav-item${active === 'home' ? ' is-active' : ''}`}
+        type="button"
+        onClick={onGoHome}
+      >
+        <HomeRoundedIcon />
+        <span>首页</span>
+      </button>
+      <button
+        className={`home-nav-item${active === 'mine' ? ' is-active' : ''}`}
+        type="button"
+        onClick={onGoProfile}
+      >
+        <PersonOutlineOutlinedIcon />
+        <span>我的</span>
+      </button>
+    </nav>
+  )
+}
+
+function ScanFireIcon() {
+  return (
+    <svg className="home-custom-icon scan-fire-icon" viewBox="0 0 96 96" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="scanFireIconGradient" x1="22" y1="18" x2="74" y2="78" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#20a99f" />
+          <stop offset="1" stopColor="#0f766e" />
+        </linearGradient>
+      </defs>
+      <path d="M20 34V22a8 8 0 0 1 8-8h12" />
+      <path d="M56 14h12a8 8 0 0 1 8 8v12" />
+      <path d="M76 62v12a8 8 0 0 1-8 8H56" />
+      <path d="M40 82H28a8 8 0 0 1-8-8V62" />
+      <path
+        className="scan-fire-fill"
+        d="M50 74c-11 0-20-8-20-19 0-8 5-14 11-20 1 8 5 12 10 14-1-9 4-16 12-23 0 14 13 19 13 32 0 9-8 16-18 16 3-3 5-6 5-10 0-5-4-9-9-14-1 6-4 9-8 12-3 2-4 5-4 8 0 1 0 3 1 4Z"
+      />
+      <path className="scan-fire-cut" d="M51 72c-5 0-9-4-9-9 0-4 3-7 7-10 1 5 4 7 8 9 2 1 3 4 3 6 0 2-1 4-3 6-1-4-3-6-6-8-2 2-3 4-3 6 0 1 1 2 3 0Z" />
+    </svg>
+  )
+}
+
+function DocsFolderIcon() {
+  return (
+    <svg className="home-custom-icon docs-folder-icon" viewBox="0 0 96 96" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="docsFolderIconGradient" x1="22" y1="26" x2="78" y2="78" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#24aaa0" />
+          <stop offset="1" stopColor="#0f766e" />
+        </linearGradient>
+      </defs>
+      <path className="doc-sheet" d="M38 14h24l14 14v38H38Z" />
+      <path className="doc-fold" d="M62 14v15h14" />
+      <path className="doc-line" d="M46 37h20" />
+      <path className="doc-line" d="M46 49h24" />
+      <path className="folder-back" d="M18 36h22l7 8h31a6 6 0 0 1 6 6v6H18Z" />
+      <path className="folder-front" d="M14 48h68c4 0 7 4 6 8l-6 24a7 7 0 0 1-7 5H21a7 7 0 0 1-7-7Z" />
+    </svg>
   )
 }
 

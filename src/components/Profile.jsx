@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Button, Stack, CircularProgress, IconButton } from '@mui/material';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import HistoryIcon from '@mui/icons-material/History';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { fetchLedger } from '../utils/api';
 
 const fmtDate = (ts) => {
@@ -16,14 +19,19 @@ const LEDGER_LABEL = { activate: '开通会员', renew: '续费会员' };
  * 个人中心：VIP 状态卡 + 购买记录。
  * membership 由父组件传入（含 isVip / vipExpireAt / totalPaidCents）。
  */
-export default function Profile({ membership, onBuy, onBack }) {
+export default function Profile({ membership, onBuy, onBack, onGoHistory }) {
   const [ledger, setLedger] = useState(null);
+  const payRecordRef = useRef(null);
 
   useEffect(() => {
     fetchLedger().then((d) => setLedger(d.ledger)).catch(() => setLedger([]));
   }, []);
 
   const isVip = membership?.isVip;
+
+  const scrollToPayRecord = () => {
+    payRecordRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <Box sx={{ maxWidth: 540, mx: 'auto' }}>
@@ -91,10 +99,29 @@ export default function Profile({ membership, onBuy, onBack }) {
         </Button>
       </Box>
 
-      {/* 购买记录 */}
-      <Box sx={{ mb: 2 }}>
+      {/* 快捷入口：历史记录 / 支付记录 */}
+      <Box sx={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 1.25,
+        mb: 3,
+      }}>
+        <EntryButton
+          icon={<HistoryIcon sx={{ fontSize: 20 }} />}
+          label="历史记录"
+          onClick={onGoHistory}
+        />
+        <EntryButton
+          icon={<ReceiptLongOutlinedIcon sx={{ fontSize: 20 }} />}
+          label="支付记录"
+          onClick={scrollToPayRecord}
+        />
+      </Box>
+
+      {/* 支付记录 */}
+      <Box ref={payRecordRef} sx={{ mb: 2, scrollMarginTop: 16 }}>
         <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mb: 1.5 }}>
-          <h3 className="h-section" style={{ fontSize: '0.96rem' }}>购买记录</h3>
+          <h3 className="h-section" style={{ fontSize: '0.96rem' }}>支付记录</h3>
           {ledger && ledger.length > 0 && (
             <Box className="num" sx={{ fontSize: '0.78rem', color: 'var(--ink-3)' }}>
               {ledger.length} 笔
@@ -142,6 +169,54 @@ export default function Profile({ membership, onBuy, onBack }) {
           </Stack>
         )}
       </Box>
+    </Box>
+  );
+}
+
+function EntryButton({ icon, label, onClick }) {
+  return (
+    <Box
+      component="button"
+      type="button"
+      onClick={onClick}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 1,
+        px: 1.75,
+        py: 1.4,
+        borderRadius: 'var(--r-md)',
+        border: '1px solid var(--line)',
+        background: 'var(--bg-elev)',
+        color: 'var(--ink)',
+        cursor: 'pointer',
+        fontFamily: 'inherit',
+        textAlign: 'left',
+        transition: 'border-color .18s ease, background .18s ease, transform .12s ease',
+        '&:hover': {
+          borderColor: 'rgba(15, 118, 110, 0.32)',
+          background: 'var(--bg-mute)',
+        },
+        '&:active': { transform: 'scale(0.985)' },
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.15, minWidth: 0 }}>
+        <Box sx={{
+          width: 32, height: 32,
+          borderRadius: 'var(--r-sm)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'var(--accent-soft)',
+          color: 'var(--accent)',
+          flexShrink: 0,
+        }}>
+          {icon}
+        </Box>
+        <Box sx={{ fontSize: '0.9rem', fontWeight: 600, lineHeight: 1.25 }}>
+          {label}
+        </Box>
+      </Box>
+      <ChevronRightIcon sx={{ fontSize: 18, color: 'var(--ink-4)', flexShrink: 0 }} />
     </Box>
   );
 }

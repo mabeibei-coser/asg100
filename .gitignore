@@ -25,3 +25,6 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/
+
+# Design exploration screenshots (设计探索中间产物)
+docs/design/
