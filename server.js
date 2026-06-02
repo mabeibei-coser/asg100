@@ -156,7 +156,14 @@ app.post("/api/logout", async (req, res) => {
 app.get("/api/me", async (req, res) => {
   const session = await getSession(req, res);
   if (!session.userId) return res.status(401).json({ error: "未登录" });
-  res.json({ userId: session.userId, phone: session.phone, hasOpenid: !!session.openid });
+  const m = getMembership(session.phone);
+  res.json({
+    userId: session.userId,
+    phone: session.phone,
+    hasOpenid: !!session.openid,
+    isVip: m.isVip,
+    vipExpireAt: m.vipExpireAt,
+  });
 });
 
 // ════════════ 会员状态（业务产品"刷卡"契约 + 个人中心）════════════
