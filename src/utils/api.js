@@ -44,35 +44,37 @@ export const fetchPackages = () => http('GET', '/packages');
 export const fetchHistory = () => http('GET', '/me/history');
 export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`);
 
-// 微信内置 WebView 会静默拦截 Content-Disposition: attachment 的导航
-// （表现为「按钮按了像没按一样」），下载入口要先检测、改成引导用户「右上角→在浏览器打开」。
-export function isWeixinBrowser() {
-  if (typeof navigator === 'undefined') return false;
-  return /MicroMessenger/i.test(navigator.userAgent);
+/**
+ * 预检：最近 N 天台账是否可下载。供页面挂载时预先检查使用。
+ * 返回 { ok: true, count } | { ok: false, reason: 'forbidden' | 'empty' | 'error' }。
+ * 之所以拆出来：用户点击下载时必须同步跳转（await 后 window.location.href 在微信 /
+ * iOS Safari 会被当作"程序自动跳转"拦截 → 表现为按了没反应）。
+ * 流程改成：进入历史页 useEffect 里就预检；用户点击时纯同步跳转 triggerLedgerDownload。
+ */
+export async function checkLedger(days = 3) {
+  try {
+    const res = await fetch(`${API_BASE}/me/history/ledger?days=${days}&check=1`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      return { ok: true, count: data.count || 0 };
+    }
+    if (res.status === 403) return { ok: false, reason: 'forbidden' };
+    if (res.status === 404) return { ok: false, reason: 'empty' };
+    return { ok: false, reason: 'error' };
+  } catch {
+    return { ok: false, reason: 'error' };
+  }
 }
 
 /**
- * 下载最近 N 天台账（Excel，含现场照片）。VIP 专享。
- * 两步：先 fetch ?check=1 拿 403 needVip / 404 无记录的 JSON 提示；通过后跳真实 URL 让浏览器原生下载。
- * 之前用 fetch+blob URL 在微信 WebView 不兼容（blob 跨进程失效）；
- * 现在 attachment 头由 HTTP URL 直接触发，外部浏览器打开同一 URL 也能正确下载。
- * 微信内（MicroMessenger）attachment 跳转会被静默拦截，应在调用方先用 isWeixinBrowser 拦截 + 引导用户。
+ * 触发台账下载。必须在用户手势同步上下文内调用（onClick 直接调，不能在 await 之后调）。
+ * 浏览器原生处理 attachment 响应头触发下载，微信 X5 内核同样支持。
+ * 调用前应已经通过 checkLedger() 预检过；本函数不再做任何 fetch。
  */
-export async function downloadHistoryLedger(days = 3) {
-  // 步骤 1：预检——保留原有的 403/404 提示 UX
-  const check = await fetch(`${API_BASE}/me/history/ledger?days=${days}&check=1`, {
-    method: 'GET',
-    credentials: 'include',
-  });
-  if (!check.ok) {
-    let data = {};
-    try { data = await check.json(); } catch { /* 非 JSON 错误体 */ }
-    const err = new Error(data?.error || `下载失败 (${check.status})`);
-    err.status = check.status;
-    err.data = data;
-    throw err;
-  }
-  // 步骤 2：通过后跳真实 HTTP URL，浏览器原生处理（attachment 头触发下载）
+export function triggerLedgerDownload(days = 3) {
   window.location.href = `${API_BASE}/me/history/ledger?days=${days}`;
 }
 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Stack, CircularProgress, IconButton, Button, Snackbar, Alert, Dialog } from '@mui/material';
+import { Box, Stack, CircularProgress, IconButton, Button, Snackbar, Alert } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DownloadIcon from '@mui/icons-material/Download';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { fetchHistory, fetchHazardDetail, downloadHistoryLedger, isWeixinBrowser } from '../utils/api';
+import { fetchHistory, fetchHazardDetail, checkLedger, triggerLedgerDownload } from '../utils/api';
 
 const fmtTime = (ts) => {
   if (!ts) return '—';
@@ -50,13 +50,20 @@ export default function History({ onBack, onBuy, isVip }) {
   const [detailLoading, setDetailLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [snack, setSnack] = useState({ open: false, msg: '', severity: 'info', withBuy: false });
-  const [wxHint, setWxHint] = useState(false);  // 微信内引导遮罩
+  // 挂载时预检台账：用户点击时纯同步跳转，避免 await 之后丢失用户手势被微信/iOS 拦截。
+  // null = 未检 / { ok: true, count } / { ok: false, reason: 'forbidden'|'empty'|'error' }
+  const [ledgerCheck, setLedgerCheck] = useState(null);
 
   useEffect(() => {
     fetchHistory()
       .then((d) => { setItems(d.items); })
       .catch(() => setItems([]));
   }, []);
+
+  useEffect(() => {
+    if (!isVip) return;
+    checkLedger(3).then(setLedgerCheck);
+  }, [isVip]);
 
   const openDetail = async (id) => {
     setDetailLoading(true);
@@ -71,29 +78,32 @@ export default function History({ onBack, onBuy, isVip }) {
 
   const closeSnack = () => setSnack((s) => ({ ...s, open: false }));
 
-  const handleDownload = async () => {
+  // 同步函数：不能有 await，否则 window.location.href 会在微信/iOS 失去用户手势被拦截。
+  // 预检结果已经在挂载时拿到，这里只做分发 + 同步跳转。
+  const handleDownload = () => {
     if (!isVip) {
       setSnack({ open: true, msg: '开通 VIP 后可下载台账', severity: 'warning', withBuy: true });
       return;
     }
     if (downloading) return;
-    // 微信 WebView 静默拦截 attachment 跳转 → 显示引导让用户去外部浏览器
-    if (isWeixinBrowser()) { setWxHint(true); return; }
-    setDownloading(true);
-    try {
-      await downloadHistoryLedger(3);
-      setSnack({ open: true, msg: '台账已开始下载（最近 3 天）', severity: 'success', withBuy: false });
-    } catch (e) {
-      if (e.status === 403) {
-        setSnack({ open: true, msg: '开通 VIP 后可下载台账', severity: 'warning', withBuy: true });
-      } else if (e.status === 404) {
-        setSnack({ open: true, msg: e.data?.error || '最近 3 天没有识别记录', severity: 'info', withBuy: false });
-      } else {
-        setSnack({ open: true, msg: e.message || '下载失败，请稍后重试', severity: 'error', withBuy: false });
-      }
-    } finally {
-      setDownloading(false);
+    if (ledgerCheck === null) {
+      setSnack({ open: true, msg: '正在准备，请稍后再试', severity: 'info', withBuy: false });
+      return;
     }
+    if (!ledgerCheck.ok) {
+      if (ledgerCheck.reason === 'forbidden') {
+        setSnack({ open: true, msg: '开通 VIP 后可下载台账', severity: 'warning', withBuy: true });
+      } else if (ledgerCheck.reason === 'empty') {
+        setSnack({ open: true, msg: '最近 3 天没有识别记录', severity: 'info', withBuy: false });
+      } else {
+        setSnack({ open: true, msg: '下载暂不可用，请稍后重试', severity: 'error', withBuy: false });
+      }
+      return;
+    }
+    setDownloading(true);
+    triggerLedgerDownload(3);
+    setSnack({ open: true, msg: '台账已开始下载（最近 3 天）', severity: 'success', withBuy: false });
+    setTimeout(() => setDownloading(false), 1500);
   };
 
   // ─── 详情视图：照片 + 每条隐患的完整字段（与 A600 当时显示一致）───
@@ -371,29 +381,6 @@ export default function History({ onBack, onBuy, isVip }) {
           {snack.msg}
         </Alert>
       </Snackbar>
-
-      {/* 微信内 attachment 跳转被静默拦截 → 引导用户去外部浏览器（cookie 跨进程不共享，要重登） */}
-      <Dialog open={wxHint} onClose={() => setWxHint(false)} maxWidth="xs" fullWidth
-        slotProps={{ paper: { sx: { borderRadius: 'var(--r-md)', m: 2 } } }}>
-        <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Box sx={{ fontSize: 36, mb: 1.5 }}>📲</Box>
-          <Box sx={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--ink)', mb: 1.5 }}>
-            请在浏览器中打开下载
-          </Box>
-          <Box sx={{ fontSize: '0.85rem', color: 'var(--ink-2)', lineHeight: 1.7, mb: 2.5, textAlign: 'left' }}>
-            微信浏览器限制文件下载，请按以下两步操作：<br />
-            <strong>1.</strong> 点击当前页面右上角「···」按钮<br />
-            <strong>2.</strong> 选择「在浏览器打开」<br />
-            <Box component="span" sx={{ color: 'var(--ink-3)', fontSize: '0.78rem' }}>
-              （外部浏览器中需要重新登录后再点击下载）
-            </Box>
-          </Box>
-          <Button fullWidth variant="contained" disableElevation onClick={() => setWxHint(false)}
-            sx={{ py: 1.1, borderRadius: 'var(--r-sm)', background: 'var(--accent)', color: '#fff', fontWeight: 700, '&:hover': { background: 'var(--accent-2)' } }}>
-            我知道了
-          </Button>
-        </Box>
-      </Dialog>
     </Box>
   );
 }
