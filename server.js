@@ -28,6 +28,7 @@ const {
   isSafeFromPath,
   resolveRedirect,
 } = await import("./lib/wechat-oauth.js");
+const { signDownloadToken, verifyDownloadToken } = await import("./lib/download-token.js");
 
 const PORT = Number(process.env.ASG100_API_PORT || process.env.PORT) || 4002;
 const NOTIFY_PATH = "/api/pay/wechat/notify";
@@ -55,6 +56,15 @@ function requireSession(handler) {
     return handler(req, res);
   };
 }
+
+// ════════════ HTML 错误页（下载流不该返 JSON，否则浏览器把 JSON 当页面渲染）════════════
+// 用户在「在浏览器中打开」后跨进程访问，没 cookie → 返友好 HTML，引导回微信
+function htmlPage(title, inner) {
+  return `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;padding:48px 24px;background:#f4f3ee;color:#1a1815;text-align:center;margin:0;min-height:100vh;box-sizing:border-box}.icon{font-size:64px;margin-bottom:16px}h1{font-size:20px;font-weight:700;margin:8px 0 16px}p{font-size:14px;line-height:1.7;color:#6b6962;max-width:320px;margin:0 auto 8px}.hint{background:#fff;border-radius:12px;padding:20px 24px;margin:24px auto;max-width:320px;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.04)}.hint p{margin:6px 0;max-width:none}.hint b{color:#0f766e}</style></head><body>${inner}</body></html>`;
+}
+const htmlLoginPrompt = () => htmlPage("登录已失效", `<div class="icon">🔒</div><h1>登录已失效</h1><p>下载链接已过期（10 分钟）或您未在微信内登录。</p><div class="hint"><p><b>请回到微信内重新打开：</b></p><p>1. 关闭这个浏览器标签</p><p>2. 回到微信</p><p>3. 重新进入「我的识别历史」并点击「下载台账」</p></div>`);
+const htmlVipPrompt = () => htmlPage("VIP 专享", `<div class="icon">👑</div><h1>下载台账为 VIP 专享</h1><p>请回到微信内开通 VIP 后下载。</p>`);
+const htmlEmptyPrompt = (days) => htmlPage("无可下载记录", `<div class="icon">📋</div><h1>最近 ${days} 天没有识别记录</h1><p>请回到微信内先做几次识别再下载。</p>`);
 
 // ════════════ 短信验证码登录 ════════════
 
@@ -210,26 +220,58 @@ app.get(
 
 // 下载最近 N 天台账（VIP 专享）：服务端用 exceljs 生成 xlsx，并嵌入每条记录的现场照片。
 // 与 A600 应用内台账同列；台账下载是 VIP 付费点（与 A600 + 会员中心文案一致）。
-app.get(
-  "/api/me/history/ledger",
-  requireSession(async (req, res) => {
-    const m = getMembership(req.session.phone);
-    if (!m?.isVip) {
-      return res.status(403).json({ error: "开通 VIP 后可下载台账", needVip: true });
-    }
-    const days = Math.min(Math.max(parseInt(req.query.days, 10) || 3, 1), 31);
-    const since = Date.now() - days * 86400000;
-    const reports = getRecentHazardReports(req.session.phone, since);
-    if (!reports.length) {
-      return res.status(404).json({ error: `最近 ${days} 天没有识别记录` });
-    }
-    // 预检：?check=1 只验权限+数据，不生成 Excel
-    // 前端用此做微信 WebView 兼容的两步下载（先 fetch 拿 403/404 提示，通过后跳真实 URL）
-    if (req.query.check === "1") {
-      return res.json({ ok: true, count: reports.length });
-    }
+//
+// 鉴权双轨（解决「在浏览器中打开」后跨进程 cookie 不共享 → 401 → 浏览器渲染 JSON 错误页）：
+// 1) check=1 模式：必须 cookie session（前端 fetch 调，cookie 一定带）。校验通过返回签名 token。
+// 2) 实际下载：?dt=<token> 优先（用户复制 URL 给浏览器，URL 自带凭证）→ cookie session 兜底。
+app.get("/api/me/history/ledger", async (req, res) => {
+  const days = Math.min(Math.max(parseInt(req.query.days, 10) || 3, 1), 31);
+  const isCheck = req.query.check === "1";
 
-    const fmtTime = (ts) => {
+  // 鉴权解析：token 仅在实际下载时有效（check=1 必须 cookie，保证签发安全）
+  let phone = null;
+  let bypassMembershipCheck = false;
+  const dt = typeof req.query.dt === "string" ? req.query.dt : null;
+  if (dt && !isCheck) {
+    const ok = verifyDownloadToken(dt, { scope: "ledger-download", ref: `days=${days}` });
+    if (ok) {
+      phone = ok.phone;
+      bypassMembershipCheck = true; // 签发时已校过 VIP + 有数据
+    }
+  }
+  if (!phone) {
+    const session = await getSession(req, res);
+    if (!session.userId) {
+      if (isCheck) return res.status(401).json({ error: "请先登录" });
+      return res.status(401).send(htmlLoginPrompt());
+    }
+    phone = session.phone;
+  }
+
+  // VIP 校验（token 路径跳过）
+  if (!bypassMembershipCheck) {
+    const m = getMembership(phone);
+    if (!m?.isVip) {
+      if (isCheck) return res.status(403).json({ error: "开通 VIP 后可下载台账", needVip: true });
+      return res.status(403).send(htmlVipPrompt());
+    }
+  }
+
+  // 数据存在性
+  const since = Date.now() - days * 86400000;
+  const reports = getRecentHazardReports(phone, since);
+  if (!reports.length) {
+    if (isCheck) return res.status(404).json({ error: `最近 ${days} 天没有识别记录` });
+    return res.status(404).send(htmlEmptyPrompt(days));
+  }
+
+  // check=1：返回签名 token（10 分钟内有效，前端拼到下载 URL 上）
+  if (isCheck) {
+    const token = signDownloadToken({ phone, scope: "ledger-download", ref: `days=${days}` });
+    return res.json({ ok: true, count: reports.length, downloadToken: token });
+  }
+  // ─── 下面是 Excel 生成（沿用原逻辑） ───
+  const fmtTime = (ts) => {
       const d = new Date(ts);
       const p = (n) => String(n).padStart(2, "0");
       return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
@@ -314,12 +356,11 @@ app.get(
         `attachment; filename*=UTF-8''${encodeURIComponent(fname)}`
       );
       res.send(Buffer.from(buf));
-    } catch (err) {
-      console.error("[ledger] 生成失败:", err);
-      res.status(500).json({ error: "台账生成失败，请稍后重试" });
-    }
-  })
-);
+  } catch (err) {
+    console.error("[ledger] 生成失败:", err);
+    res.status(500).json({ error: "台账生成失败，请稍后重试" });
+  }
+});
 
 // ════════════ 微信支付 ════════════
 

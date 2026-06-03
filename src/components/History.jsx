@@ -79,7 +79,8 @@ export default function History({ onBack, onBuy, isVip }) {
   const closeSnack = () => setSnack((s) => ({ ...s, open: false }));
 
   // 同步函数：不能有 await，否则 window.location.href 会在微信/iOS 失去用户手势被拦截。
-  // 预检结果已经在挂载时拿到，这里只做分发 + 同步跳转。
+  // 预检结果（含签名 URL）已在挂载时拿到，这里只做分发 + 同步跳转。
+  // 签名 URL 跨进程友好：用户用「在浏览器中打开」跳到外部浏览器也能下载，不必重登。
   const handleDownload = () => {
     if (!isVip) {
       setSnack({ open: true, msg: '开通 VIP 后可下载台账', severity: 'warning', withBuy: true });
@@ -100,8 +101,12 @@ export default function History({ onBack, onBuy, isVip }) {
       }
       return;
     }
+    if (!ledgerCheck.downloadUrl) {
+      setSnack({ open: true, msg: '下载链接未就绪，请稍后重试', severity: 'error', withBuy: false });
+      return;
+    }
     setDownloading(true);
-    triggerLedgerDownload(3);
+    triggerLedgerDownload(ledgerCheck.downloadUrl);
     setSnack({ open: true, msg: '台账已开始下载（最近 3 天）', severity: 'success', withBuy: false });
     setTimeout(() => setDownloading(false), 1500);
   };

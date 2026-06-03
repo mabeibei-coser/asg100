@@ -45,11 +45,9 @@ export const fetchHistory = () => http('GET', '/me/history');
 export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`);
 
 /**
- * 预检：最近 N 天台账是否可下载。供页面挂载时预先检查使用。
- * 返回 { ok: true, count } | { ok: false, reason: 'forbidden' | 'empty' | 'error' }。
- * 之所以拆出来：用户点击下载时必须同步跳转（await 后 window.location.href 在微信 /
- * iOS Safari 会被当作"程序自动跳转"拦截 → 表现为按了没反应）。
- * 流程改成：进入历史页 useEffect 里就预检；用户点击时纯同步跳转 triggerLedgerDownload。
+ * 预检 + 拿签名 URL：挂载时在微信内（cookie 已登录态）调用，服务端返回签名 token。
+ * 拼成的下载 URL 自带凭证、10 分钟内有效，用户用「在浏览器中打开」跳过去也能下载。
+ * 返回 { ok: true, count, downloadUrl } | { ok: false, reason: 'forbidden' | 'empty' | 'error' }。
  */
 export async function checkLedger(days = 3) {
   try {
@@ -59,7 +57,11 @@ export async function checkLedger(days = 3) {
     });
     if (res.ok) {
       const data = await res.json().catch(() => ({}));
-      return { ok: true, count: data.count || 0 };
+      const token = data.downloadToken;
+      const downloadUrl = token
+        ? `${API_BASE}/me/history/ledger?days=${days}&dt=${encodeURIComponent(token)}`
+        : null;
+      return { ok: true, count: data.count || 0, downloadUrl };
     }
     if (res.status === 403) return { ok: false, reason: 'forbidden' };
     if (res.status === 404) return { ok: false, reason: 'empty' };
@@ -70,12 +72,11 @@ export async function checkLedger(days = 3) {
 }
 
 /**
- * 触发台账下载。必须在用户手势同步上下文内调用（onClick 直接调，不能在 await 之后调）。
- * 浏览器原生处理 attachment 响应头触发下载，微信 X5 内核同样支持。
- * 调用前应已经通过 checkLedger() 预检过；本函数不再做任何 fetch。
+ * 触发下载：必须在用户手势同步上下文内调用（onClick 直接调，不能在 await 之后调）。
+ * URL 应预先通过 checkLedger() 拿到（签名 URL，跨进程友好）。
  */
-export function triggerLedgerDownload(days = 3) {
-  window.location.href = `${API_BASE}/me/history/ledger?days=${days}`;
+export function triggerLedgerDownload(url) {
+  window.location.href = url;
 }
 
 // ── 支付 ──
