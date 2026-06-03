@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Typography, TextField, Button, Alert } from '@mui/material';
+import { Box, TextField, Button, Alert } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
 import { sendSmsCode, verifySmsCode } from '../utils/api';
 
@@ -100,29 +100,19 @@ export default function LoginForm({ onLoggedIn }) {
       sx={{
         maxWidth: 400,
         mx: 'auto',
-        px: { xs: 3, md: 3.5 },
-        pt: { xs: 3, md: 3.5 },
-        pb: { xs: 2.75, md: 3 },
+        px: { xs: 2.75, md: 3.25 },
+        pt: { xs: 2.75, md: 3.25 },
+        pb: { xs: 2.5, md: 2.75 },
         display: 'flex',
         flexDirection: 'column',
         gap: 1.5,
-        background: '#fff',
-        borderRadius: 4,
-        border: '1px solid rgba(15,23,42,0.06)',
-        boxShadow: '0 8px 32px rgba(15, 118, 110, 0.10), 0 1px 2px rgba(15, 118, 110, 0.04)',
+        background: 'rgba(255, 255, 255, 0.92)',
+        borderRadius: 'var(--r-lg)',
+        border: '1px solid rgba(15, 118, 110, 0.10)',
+        boxShadow: '0 14px 36px rgba(15, 118, 110, 0.10), 0 2px 6px rgba(15, 20, 25, 0.04)',
+        backdropFilter: 'blur(8px)',
       }}
     >
-      <Box sx={{ textAlign: 'center', mb: 0.5 }}>
-        <Typography
-          sx={{ fontSize: '1.25rem', fontWeight: 700, color: ACCENT, letterSpacing: '-0.01em', mb: 0.75 }}
-        >
-          手机号登录
-        </Typography>
-        <Typography sx={{ color: '#94a3b8', fontSize: '0.8rem', lineHeight: 1.6, px: 1 }}>
-          输入手机号获取验证码，登录后即可使用隐患识别
-        </Typography>
-      </Box>
-
       <TextField
         label="手机号"
         value={phone}

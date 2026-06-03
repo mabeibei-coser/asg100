@@ -17,6 +17,7 @@ import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
 import Profile from './components/Profile'
 import History from './components/History'
+import Payments from './components/Payments'
 import { fetchMe, fetchMembership, logout } from './utils/api'
 
 const fmtDate = (ts) => {
@@ -102,16 +103,20 @@ function App() {
     )
   }
 
-  const GATED_VIEWS = ['billing', 'profile', 'history']
+  const GATED_VIEWS = ['billing', 'profile', 'history', 'payments']
   // 登录界面：主动点"登录"(view==='login')，或未登录却进了受保护视图 → 拦在这里登录
   const showLogin = view === 'login' || (GATED_VIEWS.includes(view) && !me)
 
-  // 登录界面：保持登录壳布局；左上角可返回首页（首页无需登录即可浏览）
+  // 登录界面：顶对齐 + 纸感背景，与首页同款品牌底；左上角可返回首页
   if (showLogin) {
     return (
-      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 2.5, md: 5 }, px: 2 }}>
+      <Box className="login-page" sx={{
+        minHeight: '100dvh',
+        display: 'flex', flexDirection: 'column',
+        pt: { xs: '6vh', md: '8vh' }, pb: { xs: 4, md: 6 }, px: 2,
+      }}>
         <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
-          <Box sx={{ mb: 1 }}>
+          <Box sx={{ mb: 0.5 }}>
             <IconButton size="small" onClick={() => { setPendingNav(null); setView('home') }} sx={{
               color: 'var(--ink-3)',
               '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
@@ -119,17 +124,18 @@ function App() {
               <ArrowBackIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
-          <Box sx={{ textAlign: 'center', mb: 2.5 }}>
+          <Box sx={{ textAlign: 'center', mb: 2 }}>
             <Box sx={{
-              width: 52, height: 52, mx: 'auto', mb: 2.5,
+              width: 46, height: 46, mx: 'auto', mb: 1.75,
               borderRadius: 'var(--r-md)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'linear-gradient(180deg, #134e4a 0%, #0f766e 100%)',
-              boxShadow: '0 8px 22px rgba(15, 118, 110, 0.32)',
+              boxShadow: '0 8px 22px rgba(15, 118, 110, 0.28)',
             }}>
-              <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 27 }} />
+              <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 24 }} />
             </Box>
-            <h1 className="h-display" style={{ fontSize: '1.55rem' }}>
+            <div className="h-eyebrow" style={{ marginBottom: 8 }}>asg100 · 会员中心</div>
+            <h1 className="h-display" style={{ fontSize: '1.42rem', lineHeight: 1.2 }}>
               欢迎使用安全隐患识别平台
             </h1>
           </Box>
@@ -321,8 +327,9 @@ function App() {
         {view !== 'home' && (
           <Box className="surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
             {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
-            {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} />}
+            {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} onGoPayments={() => setView('payments')} />}
             {view === 'history' && <History onBack={() => setView('home')} onBuy={() => setView('billing')} isVip={isVip} />}
+            {view === 'payments' && <Payments onBack={() => setView('profile')} />}
           </Box>
         )}
 

@@ -876,6 +876,14 @@ body::before {
   }
 }
 
+/* —— 登录页：与首页同款纸感渐变底，让登录卡片浮在品牌色微光上 —— */
+.login-page {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(15, 118, 110, 0.07), transparent 36%),
+    radial-gradient(circle at 90% 88%, rgba(176, 138, 62, 0.05), transparent 40%),
+    linear-gradient(180deg, #fbfaf6 0%, var(--bg) 100%);
+}
+
 /* —— 通用 surface（卡片/面）—— */
 .surface {
   background: var(--bg-elev);

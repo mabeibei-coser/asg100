@@ -1,37 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Box, Button, Stack, CircularProgress, IconButton } from '@mui/material';
+import React from 'react';
+import { Box, Button, IconButton } from '@mui/material';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HistoryIcon from '@mui/icons-material/History';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { fetchLedger } from '../utils/api';
 
 const fmtDate = (ts) => {
   if (!ts) return '—';
   const d = new Date(ts);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
-const yuan = (cents) => `¥${(cents / 100).toFixed(2)}`;
-const LEDGER_LABEL = { activate: '开通会员', renew: '续费会员' };
 
 /**
- * 个人中心：VIP 状态卡 + 购买记录。
- * membership 由父组件传入（含 isVip / vipExpireAt / totalPaidCents）。
+ * 个人中心：VIP 状态卡 + 两个快捷入口（历史记录 / 支付记录）。
+ * 支付记录抽到独立视图 Payments，点击按钮路由进入。
  */
-export default function Profile({ membership, onBuy, onBack, onGoHistory }) {
-  const [ledger, setLedger] = useState(null);
-  const payRecordRef = useRef(null);
-
-  useEffect(() => {
-    fetchLedger().then((d) => setLedger(d.ledger)).catch(() => setLedger([]));
-  }, []);
-
+export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPayments }) {
   const isVip = membership?.isVip;
-
-  const scrollToPayRecord = () => {
-    payRecordRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   return (
     <Box sx={{ maxWidth: 540, mx: 'auto' }}>
@@ -114,60 +100,8 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory }) {
         <EntryButton
           icon={<ReceiptLongOutlinedIcon sx={{ fontSize: 20 }} />}
           label="支付记录"
-          onClick={scrollToPayRecord}
+          onClick={onGoPayments}
         />
-      </Box>
-
-      {/* 支付记录 */}
-      <Box ref={payRecordRef} sx={{ mb: 2, scrollMarginTop: 16 }}>
-        <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', mb: 1.5 }}>
-          <h3 className="h-section" style={{ fontSize: '0.96rem' }}>支付记录</h3>
-          {ledger && ledger.length > 0 && (
-            <Box className="num" sx={{ fontSize: '0.78rem', color: 'var(--ink-3)' }}>
-              {ledger.length} 笔
-            </Box>
-          )}
-        </Box>
-
-        {ledger === null ? (
-          <Box sx={{ textAlign: 'center', py: 3 }}>
-            <CircularProgress size={20} sx={{ color: 'var(--accent)' }} />
-          </Box>
-        ) : ledger.length === 0 ? (
-          <Box sx={{
-            py: 4, textAlign: 'center',
-            borderRadius: 'var(--r-md)',
-            background: 'var(--bg-mute)',
-            color: 'var(--ink-3)',
-            fontSize: '0.85rem',
-          }}>
-            暂无购买记录
-          </Box>
-        ) : (
-          <Stack divider={<Box sx={{ height: '1px', background: 'var(--line)' }} />}>
-            {ledger.map((l) => (
-              <Box key={l.id} sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                py: 1.5,
-                px: 0.25,
-              }}>
-                <Box>
-                  <Box sx={{ fontSize: '0.88rem', fontWeight: 550, color: 'var(--ink)', lineHeight: 1.3 }}>
-                    {LEDGER_LABEL[l.type] || l.type} <Box component="span" sx={{ color: 'var(--ink-3)', fontWeight: 400 }}>· {l.duration_days} 天</Box>
-                  </Box>
-                  <Box className="num" sx={{ fontSize: '0.74rem', color: 'var(--ink-3)', mt: 0.35 }}>
-                    {fmtDate(l.created_at)}
-                  </Box>
-                </Box>
-                <Box className="num" sx={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--ink)' }}>
-                  {yuan(l.amount_cents)}
-                </Box>
-              </Box>
-            ))}
-          </Stack>
-        )}
       </Box>
     </Box>
   );
