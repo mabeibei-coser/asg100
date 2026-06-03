@@ -367,21 +367,23 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
           </div>
         </header>
 
-        <section className="fire-ai-hero" aria-label="AI 消防隐患自动检查">
-          <img className="fire-ai-hero-image" src={homeFireAiBg} alt="" />
-        </section>
+        <section className="home-visual-stage" aria-label="AI 消防隐患自动检查">
+          <div className="fire-ai-hero" aria-hidden="true">
+            <img className="fire-ai-hero-image" src={homeFireAiBg} alt="" />
+          </div>
 
-        <section className="home-actions" aria-label="主要功能">
-          <HomeActionCard
-            icon={<ScanFireIcon />}
-            label="隐患识别"
-            onClick={onGoIdentify}
-          />
-          <HomeActionCard
-            icon={<DocsFolderIcon />}
-            label="资料大全"
-            onClick={onGoResources}
-          />
+          <section className="home-actions" aria-label="主要功能">
+            <HomeActionCard
+              icon={<ScanFireIcon />}
+              label="隐患识别"
+              onClick={onGoIdentify}
+            />
+            <HomeActionCard
+              icon={<DocsFolderIcon />}
+              label="资料大全"
+              onClick={onGoResources}
+            />
+          </section>
         </section>
 
         <BottomNav active="home" onGoHome={() => {}} onGoHistory={onGoHistory} onGoProfile={onGoProfile} />
@@ -430,15 +432,16 @@ function ScanFireIcon() {
           <stop offset="1" stopColor="#0f766e" />
         </linearGradient>
       </defs>
-      <path d="M20 34V22a8 8 0 0 1 8-8h12" />
-      <path d="M56 14h12a8 8 0 0 1 8 8v12" />
-      <path d="M76 62v12a8 8 0 0 1-8 8H56" />
-      <path d="M40 82H28a8 8 0 0 1-8-8V62" />
+      <path d="M21 35V24a7 7 0 0 1 7-7h11" />
+      <path d="M57 17h11a7 7 0 0 1 7 7v11" />
+      <path d="M75 61v11a7 7 0 0 1-7 7H57" />
+      <path d="M39 79H28a7 7 0 0 1-7-7V61" />
       <path
         className="scan-fire-fill"
-        d="M50 74c-11 0-20-8-20-19 0-8 5-14 11-20 1 8 5 12 10 14-1-9 4-16 12-23 0 14 13 19 13 32 0 9-8 16-18 16 3-3 5-6 5-10 0-5-4-9-9-14-1 6-4 9-8 12-3 2-4 5-4 8 0 1 0 3 1 4Z"
+        d="M49 73c-10 0-18-7-18-17 0-7 4-12 10-18 1 7 4 11 9 13-1-8 4-15 11-21 0 13 12 18 12 29 0 8-7 14-16 14 3-3 4-6 4-9 0-4-3-8-8-12-1 5-4 8-7 10-3 2-4 5-4 7 0 2 1 3 2 4Z"
       />
-      <path className="scan-fire-cut" d="M51 72c-5 0-9-4-9-9 0-4 3-7 7-10 1 5 4 7 8 9 2 1 3 4 3 6 0 2-1 4-3 6-1-4-3-6-6-8-2 2-3 4-3 6 0 1 1 2 3 0Z" />
+      <path className="scan-fire-cut" d="M50 70c-4 0-7-3-7-7 0-3 2-6 6-8 1 4 3 6 7 8 1 1 2 3 2 5 0 1-1 3-2 4-1-3-3-5-6-6-1 1-2 3-2 4 0 1 1 1 2 0Z" />
+      <path className="scan-check" d="M60 41l5 5 10-12" />
     </svg>
   )
 }
@@ -452,12 +455,12 @@ function DocsFolderIcon() {
           <stop offset="1" stopColor="#0f766e" />
         </linearGradient>
       </defs>
-      <path className="doc-sheet" d="M38 14h24l14 14v38H38Z" />
-      <path className="doc-fold" d="M62 14v15h14" />
-      <path className="doc-line" d="M46 37h20" />
-      <path className="doc-line" d="M46 49h24" />
-      <path className="folder-back" d="M18 36h22l7 8h31a6 6 0 0 1 6 6v6H18Z" />
-      <path className="folder-front" d="M14 48h68c4 0 7 4 6 8l-6 24a7 7 0 0 1-7 5H21a7 7 0 0 1-7-7Z" />
+      <path className="doc-sheet" d="M41 15h21l13 13v31H41Z" />
+      <path className="doc-fold" d="M62 15v14h13" />
+      <path className="doc-line" d="M48 37h19" />
+      <path className="doc-line" d="M48 48h22" />
+      <path className="folder-back" d="M18 38h22l7 8h31a6 6 0 0 1 6 6v5H18Z" />
+      <path className="folder-front" d="M14 50h68c4 0 7 4 6 8l-5 22a7 7 0 0 1-7 5H21a7 7 0 0 1-7-7Z" />
     </svg>
   )
 }
