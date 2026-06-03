@@ -42,12 +42,14 @@ function App() {
   // 平台首页对所有人可见、不强制登录；点功能按钮时才校验。
   // 受保护视图（billing/profile/history）未登录会落到登录界面，登录后就地展开。
   // OAuth 回跳会落到 /asg100/billing：登录态已在，直接展开开通页，付款一气呵成。
-  const [view, setView] = useState(
-    typeof window !== 'undefined' &&
-      window.location.pathname.replace(/\/+$/, '').endsWith('/billing')
-      ? 'billing'
-      : 'home'
-  )
+  // 跨产品（如 A600 底部导航）跳过来时带 ?view=history|profile|billing，直接展开对应页。
+  const [view, setView] = useState(() => {
+    if (typeof window === 'undefined') return 'home'
+    if (window.location.pathname.replace(/\/+$/, '').endsWith('/billing')) return 'billing'
+    const q = new URLSearchParams(window.location.search).get('view')
+    if (q && ['history', 'profile', 'billing', 'payments'].includes(q)) return q
+    return 'home'
+  })
   // 跨产品按钮（隐患识别 /a600/、文档库 /a800/）未登录时记下目标，登录后再跳
   const [pendingNav, setPendingNav] = useState(null)
 
