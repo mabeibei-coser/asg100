@@ -12,7 +12,7 @@ import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import './styles/index.css'
-import homeFireAiBg from './assets/home-fire-ai-bg.png'
+import homeHeroBg from './assets/home-gateway-bg.jpg'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
 import Profile from './components/Profile'
@@ -351,26 +351,18 @@ function App() {
   )
 }
 
-function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) {
+function HomeLanding({ onGoIdentify, onGoResources }) {
   return (
     <Box className="home-page">
-      <main className="home-shell rise">
-        <header className="home-title-wrap">
-          <h1 className="home-title">
-            <span className="home-title-main">安全隐患识别</span>
-            <span className="home-title-version"><em>5.0</em><span className="home-title-badge">专业版</span></span>
-          </h1>
-          <div className="home-title-ornament" aria-hidden="true">
-            <span />
-            <ShieldOutlinedIcon />
-            <span />
-          </div>
-        </header>
-
-        <section className="home-visual-stage" aria-label="AI 消防隐患自动检查">
-          <div className="fire-ai-hero" aria-hidden="true">
-            <img className="fire-ai-hero-image" src={homeFireAiBg} alt="" />
-          </div>
+      <img className="home-bg-image" src={homeHeroBg} alt="" aria-hidden="true" />
+      <main className="home-shell" aria-label="安全隐患平台首页">
+        <div className="home-center">
+          <header className="home-title-wrap">
+            <h1 className="home-title">
+              <span className="home-title-main">安全隐患识别</span>
+              <span className="home-title-version"><em>5.0</em><span className="home-title-badge">专业版</span></span>
+            </h1>
+          </header>
 
           <section className="home-actions" aria-label="主要功能">
             <HomeActionCard
@@ -384,9 +376,7 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
               onClick={onGoResources}
             />
           </section>
-        </section>
-
-        <BottomNav active="home" onGoHome={() => {}} onGoHistory={onGoHistory} onGoProfile={onGoProfile} />
+        </div>
       </main>
     </Box>
   )
