@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Stack, CircularProgress, IconButton, Button, Snackbar, Alert } from '@mui/material';
+import { Box, Stack, CircularProgress, IconButton, Button, Snackbar, Alert, Dialog } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DownloadIcon from '@mui/icons-material/Download';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { fetchHistory, fetchHazardDetail, downloadHistoryLedger } from '../utils/api';
+import { fetchHistory, fetchHazardDetail, downloadHistoryLedger, isWeixinBrowser } from '../utils/api';
 
 const fmtTime = (ts) => {
   if (!ts) return '—';
@@ -50,6 +50,7 @@ export default function History({ onBack, onBuy, isVip }) {
   const [detailLoading, setDetailLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [snack, setSnack] = useState({ open: false, msg: '', severity: 'info', withBuy: false });
+  const [wxHint, setWxHint] = useState(false);  // 微信内引导遮罩
 
   useEffect(() => {
     fetchHistory()
@@ -76,6 +77,8 @@ export default function History({ onBack, onBuy, isVip }) {
       return;
     }
     if (downloading) return;
+    // 微信 WebView 静默拦截 attachment 跳转 → 显示引导让用户去外部浏览器
+    if (isWeixinBrowser()) { setWxHint(true); return; }
     setDownloading(true);
     try {
       await downloadHistoryLedger(3);
@@ -368,6 +371,29 @@ export default function History({ onBack, onBuy, isVip }) {
           {snack.msg}
         </Alert>
       </Snackbar>
+
+      {/* 微信内 attachment 跳转被静默拦截 → 引导用户去外部浏览器（cookie 跨进程不共享，要重登） */}
+      <Dialog open={wxHint} onClose={() => setWxHint(false)} maxWidth="xs" fullWidth
+        slotProps={{ paper: { sx: { borderRadius: 'var(--r-md)', m: 2 } } }}>
+        <Box sx={{ p: 3, textAlign: 'center' }}>
+          <Box sx={{ fontSize: 36, mb: 1.5 }}>📲</Box>
+          <Box sx={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--ink)', mb: 1.5 }}>
+            请在浏览器中打开下载
+          </Box>
+          <Box sx={{ fontSize: '0.85rem', color: 'var(--ink-2)', lineHeight: 1.7, mb: 2.5, textAlign: 'left' }}>
+            微信浏览器限制文件下载，请按以下两步操作：<br />
+            <strong>1.</strong> 点击当前页面右上角「···」按钮<br />
+            <strong>2.</strong> 选择「在浏览器打开」<br />
+            <Box component="span" sx={{ color: 'var(--ink-3)', fontSize: '0.78rem' }}>
+              （外部浏览器中需要重新登录后再点击下载）
+            </Box>
+          </Box>
+          <Button fullWidth variant="contained" disableElevation onClick={() => setWxHint(false)}
+            sx={{ py: 1.1, borderRadius: 'var(--r-sm)', background: 'var(--accent)', color: '#fff', fontWeight: 700, '&:hover': { background: 'var(--accent-2)' } }}>
+            我知道了
+          </Button>
+        </Box>
+      </Dialog>
     </Box>
   );
 }

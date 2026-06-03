@@ -44,11 +44,19 @@ export const fetchPackages = () => http('GET', '/packages');
 export const fetchHistory = () => http('GET', '/me/history');
 export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`);
 
+// 微信内置 WebView 会静默拦截 Content-Disposition: attachment 的导航
+// （表现为「按钮按了像没按一样」），下载入口要先检测、改成引导用户「右上角→在浏览器打开」。
+export function isWeixinBrowser() {
+  if (typeof navigator === 'undefined') return false;
+  return /MicroMessenger/i.test(navigator.userAgent);
+}
+
 /**
  * 下载最近 N 天台账（Excel，含现场照片）。VIP 专享。
  * 两步：先 fetch ?check=1 拿 403 needVip / 404 无记录的 JSON 提示；通过后跳真实 URL 让浏览器原生下载。
  * 之前用 fetch+blob URL 在微信 WebView 不兼容（blob 跨进程失效）；
  * 现在 attachment 头由 HTTP URL 直接触发，外部浏览器打开同一 URL 也能正确下载。
+ * 微信内（MicroMessenger）attachment 跳转会被静默拦截，应在调用方先用 isWeixinBrowser 拦截 + 引导用户。
  */
 export async function downloadHistoryLedger(days = 3) {
   // 步骤 1：预检——保留原有的 403/404 提示 UX
