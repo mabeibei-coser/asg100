@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import {
   Container, Box, Button, CircularProgress, IconButton, Tooltip,
 } from '@mui/material'
@@ -109,7 +109,7 @@ function App() {
   // 登录界面：保持登录壳布局；左上角可返回首页（首页无需登录即可浏览）
   if (showLogin) {
     return (
-      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 6, md: 8 }, px: 2 }}>
+      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: { xs: 2.5, md: 5 }, px: 2 }}>
         <Container maxWidth="xs" disableGutters sx={{ px: 0 }}>
           <Box sx={{ mb: 1 }}>
             <IconButton size="small" onClick={() => { setPendingNav(null); setView('home') }} sx={{
@@ -129,12 +129,9 @@ function App() {
             }}>
               <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 27 }} />
             </Box>
-            <h1 className="h-display" style={{ fontSize: '1.55rem', marginBottom: 8 }}>
+            <h1 className="h-display" style={{ fontSize: '1.55rem' }}>
               欢迎使用安全隐患识别平台
             </h1>
-            <p style={{ color: 'var(--ink-2)', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 320, margin: '0 auto', textWrap: 'balance' }}>
-              登录后开通 VIP，解锁台账下载、历史记录与全部安防文档
-            </p>
           </Box>
           <LoginForm onLoggedIn={handleLoggedIn} />
         </Container>

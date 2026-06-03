@@ -105,7 +105,7 @@ export default function LoginForm({ onLoggedIn }) {
         pb: { xs: 2.75, md: 3 },
         display: 'flex',
         flexDirection: 'column',
-        gap: 2.25,
+        gap: 1.5,
         background: '#fff',
         borderRadius: 4,
         border: '1px solid rgba(15,23,42,0.06)',
@@ -134,8 +134,8 @@ export default function LoginForm({ onLoggedIn }) {
         fullWidth
         sx={fieldSx}
         error={Boolean(phone) && !phoneValid}
-        helperText={phone && !phoneValid ? '手机号格式不正确（应为 1 开头 11 位）' : ' '}
-        FormHelperTextProps={{ sx: { mt: 0.5, ml: 0.5, minHeight: 16 } }}
+        helperText={phone && !phoneValid ? '手机号格式不正确（应为 1 开头 11 位）' : undefined}
+        FormHelperTextProps={{ sx: { mt: 0.5, ml: 0.5 } }}
       />
 
       {/* 验证码 + 获取按钮：flex stretch 让按钮与输入框严格等高对齐 */}
