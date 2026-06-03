@@ -46,34 +46,26 @@ export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`)
 
 /**
  * 下载最近 N 天台账（Excel，含现场照片）。VIP 专享。
- * 成功 → 触发浏览器下载；失败 → 抛带 status/data 的 Error（403 needVip / 404 无记录）。
+ * 两步：先 fetch ?check=1 拿 403 needVip / 404 无记录的 JSON 提示；通过后跳真实 URL 让浏览器原生下载。
+ * 之前用 fetch+blob URL 在微信 WebView 不兼容（blob 跨进程失效）；
+ * 现在 attachment 头由 HTTP URL 直接触发，外部浏览器打开同一 URL 也能正确下载。
  */
 export async function downloadHistoryLedger(days = 3) {
-  const res = await fetch(`${API_BASE}/me/history/ledger?days=${days}`, {
+  // 步骤 1：预检——保留原有的 403/404 提示 UX
+  const check = await fetch(`${API_BASE}/me/history/ledger?days=${days}&check=1`, {
     method: 'GET',
     credentials: 'include',
   });
-  if (!res.ok) {
+  if (!check.ok) {
     let data = {};
-    try { data = await res.json(); } catch { /* 非 JSON 错误体 */ }
-    const err = new Error(data?.error || `下载失败 (${res.status})`);
-    err.status = res.status;
+    try { data = await check.json(); } catch { /* 非 JSON 错误体 */ }
+    const err = new Error(data?.error || `下载失败 (${check.status})`);
+    err.status = check.status;
     err.data = data;
     throw err;
   }
-  const blob = await res.blob();
-  const cd = res.headers.get('Content-Disposition') || '';
-  let fname = '安全隐患台账.xlsx';
-  const m = /filename\*=UTF-8''([^;]+)/.exec(cd);
-  if (m) { try { fname = decodeURIComponent(m[1]); } catch { /* keep default */ } }
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = fname;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  // 步骤 2：通过后跳真实 HTTP URL，浏览器原生处理（attachment 头触发下载）
+  window.location.href = `${API_BASE}/me/history/ledger?days=${days}`;
 }
 
 // ── 支付 ──

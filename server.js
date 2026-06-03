@@ -223,6 +223,11 @@ app.get(
     if (!reports.length) {
       return res.status(404).json({ error: `最近 ${days} 天没有识别记录` });
     }
+    // 预检：?check=1 只验权限+数据，不生成 Excel
+    // 前端用此做微信 WebView 兼容的两步下载（先 fetch 拿 403/404 提示，通过后跳真实 URL）
+    if (req.query.check === "1") {
+      return res.json({ ok: true, count: reports.length });
+    }
 
     const fmtTime = (ts) => {
       const d = new Date(ts);
