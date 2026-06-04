@@ -12,7 +12,8 @@ import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import './styles/index.css'
-import homeFireAiBg from './assets/home-fire-ai-bg.png'
+import homeFireAiBg from './assets/home-safety-shield-bg.png'
+import homeFireAiBgWide from './assets/home-safety-shield-bg-wide.png'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
 import Profile from './components/Profile'
@@ -369,7 +370,8 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
 
         <section className="home-visual-stage" aria-label="AI 消防隐患自动检查">
           <div className="fire-ai-hero" aria-hidden="true">
-            <img className="fire-ai-hero-image" src={homeFireAiBg} alt="" />
+            <img className="fire-ai-hero-image fire-ai-hero-image-mobile" src={homeFireAiBg} alt="" />
+            <img className="fire-ai-hero-image fire-ai-hero-image-desktop" src={homeFireAiBgWide} alt="" />
           </div>
 
           <section className="home-actions" aria-label="主要功能">
