@@ -35,6 +35,10 @@ const daysLeft = (ts) => {
 // 手机号中间 4 位打码：18621933756 → 186****3756
 const maskPhone = (p) => (p ? String(p).replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : p)
 
+// 文档库 A800 一库管两域（安防ASG/人才ATA），跳过去必须带 ?category= 让前台展示对应域文档；
+// 不带也行（后端按 cookie 兜底），但显式传更稳，避免双 cookie 场景被识别错。
+const DOC_LIB_ASG_URL = '/a800/?category=' + encodeURIComponent('安防ASG')
+
 // asg100 = 安全隐患域会员中心。设计语言 v2：墨黑 + 深青绿 + 暖白纸感
 function App() {
   const [me, setMe] = useState(null)
@@ -155,7 +159,7 @@ function App() {
     return (
       <HomeLanding
         onGoIdentify={() => goProduct('/a600/')}
-        onGoResources={() => goProduct('/a800/')}
+        onGoResources={() => goProduct(DOC_LIB_ASG_URL)}
         onGoHistory={() => setView('history')}
         onGoProfile={() => setView('profile')}
       />
@@ -243,8 +247,8 @@ function App() {
                 eyebrow="A800"
                 title="安防文档库"
                 desc="标准 / 制度 / 方案 / 模板，按主题与场景检索。VIP 可下载全部档案。"
-                href="/a800/"
-                onActivate={() => goProduct('/a800/')}
+                href={DOC_LIB_ASG_URL}
+                onActivate={() => goProduct(DOC_LIB_ASG_URL)}
               />
             </Box>
 
