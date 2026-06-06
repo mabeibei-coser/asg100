@@ -2219,7 +2219,7 @@ body::before {
 
   .home-title-wrap {
     position: absolute;
-    top: 82px;
+    top: 72px;
     left: 0;
     right: 0;
     z-index: 10;
@@ -2264,11 +2264,11 @@ body::before {
 
   .fire-ai-hero {
     position: absolute;
-    top: -18px;
+    top: -28px;
     left: 0;
     right: 0;
-    height: calc(100dvh + 18px);
-    min-height: calc(100dvh + 18px);
+    height: calc(100dvh + 28px);
+    min-height: calc(100dvh + 28px);
     margin: 0;
     inset-inline: 0;
   }
@@ -2291,7 +2291,7 @@ body::before {
 
   .home-actions {
     position: absolute;
-    top: clamp(456px, 54.2dvh, 474px);
+    top: clamp(438px, 52.4dvh, 456px);
     left: 50% !important;
     right: auto !important;
     bottom: auto !important;
