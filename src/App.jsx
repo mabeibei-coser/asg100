@@ -14,6 +14,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import './styles/index.css'
 import homeFireAiBg from './assets/home-safety-shield-bg.png'
 import homeFireAiBgWide from './assets/home-safety-shield-bg-wide.png'
+import hazardScanIcon from './assets/hazard-scan-icon.svg'
 import LoginForm from './components/LoginForm'
 import Billing from './components/Billing'
 import Profile from './components/Profile'
@@ -380,7 +381,7 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
 
           <section className="home-actions" aria-label="主要功能">
             <HomeActionCard
-              icon={<ScanFireIcon />}
+              icon={<img className="home-generated-icon" src={hazardScanIcon} alt="" />}
               label="隐患识别"
               onClick={onGoIdentify}
             />
@@ -426,29 +427,6 @@ function BottomNav({ active, onGoHome, onGoHistory, onGoProfile }) {
         <span>我的</span>
       </button>
     </nav>
-  )
-}
-
-function ScanFireIcon() {
-  return (
-    <svg className="home-custom-icon scan-fire-icon" viewBox="0 0 96 96" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="scanFireIconGradient" x1="22" y1="18" x2="74" y2="78" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#20a99f" />
-          <stop offset="1" stopColor="#0f766e" />
-        </linearGradient>
-      </defs>
-      <path d="M21 35V24a7 7 0 0 1 7-7h11" />
-      <path d="M57 17h11a7 7 0 0 1 7 7v11" />
-      <path d="M75 61v11a7 7 0 0 1-7 7H57" />
-      <path d="M39 79H28a7 7 0 0 1-7-7V61" />
-      <path
-        className="scan-fire-fill"
-        d="M49 73c-10 0-18-7-18-17 0-7 4-12 10-18 1 7 4 11 9 13-1-8 4-15 11-21 0 13 12 18 12 29 0 8-7 14-16 14 3-3 4-6 4-9 0-4-3-8-8-12-1 5-4 8-7 10-3 2-4 5-4 7 0 2 1 3 2 4Z"
-      />
-      <path className="scan-fire-cut" d="M50 70c-4 0-7-3-7-7 0-3 2-6 6-8 1 4 3 6 7 8 1 1 2 3 2 5 0 1-1 3-2 4-1-3-3-5-6-6-1 1-2 3-2 4 0 1 1 1 2 0Z" />
-      <path className="scan-check" d="M60 41l5 5 10-12" />
-    </svg>
   )
 }
 
