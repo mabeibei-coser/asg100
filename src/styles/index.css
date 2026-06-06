@@ -2204,7 +2204,7 @@ body::before {
 @media (max-width: 767px) {
   .home-page {
     min-height: 100dvh;
-    background: #fbfaf7;
+    background: #fffdf8;
   }
 
   .home-shell,
@@ -2219,7 +2219,7 @@ body::before {
 
   .home-title-wrap {
     position: absolute;
-    top: 96px;
+    top: 82px;
     left: 0;
     right: 0;
     z-index: 10;
@@ -2233,13 +2233,13 @@ body::before {
   }
 
   .home-title em {
-    color: #26857d;
+    color: #168f86;
   }
 
   .home-title-badge {
-    border-color: rgba(32, 169, 159, 0.30);
-    background: rgba(221, 250, 246, 0.80);
-    color: #146c66;
+    border-color: rgba(32, 169, 159, 0.36);
+    background: rgba(226, 252, 248, 0.88);
+    color: #0f766e;
     left: calc(100% + 0.12em);
     transform: none;
   }
@@ -2264,11 +2264,11 @@ body::before {
 
   .fire-ai-hero {
     position: absolute;
-    top: 0;
+    top: -18px;
     left: 0;
     right: 0;
-    height: 100dvh;
-    min-height: 100dvh;
+    height: calc(100dvh + 18px);
+    min-height: calc(100dvh + 18px);
     margin: 0;
     inset-inline: 0;
   }
@@ -2285,13 +2285,13 @@ body::before {
     object-fit: cover;
     object-position: center top;
     opacity: 1;
-    filter: none;
+    filter: saturate(1.04) contrast(1.01) brightness(1.025);
     mask-image: none;
   }
 
   .home-actions {
     position: absolute;
-    top: clamp(488px, 58.6dvh, 506px);
+    top: clamp(456px, 54.2dvh, 474px);
     left: 50% !important;
     right: auto !important;
     bottom: auto !important;
@@ -2314,8 +2314,8 @@ body::before {
     min-height: 198px;
     padding: 26px 10px 24px;
     border-radius: 24px;
-    border: 1.5px solid rgba(32, 169, 159, 0.40);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.995), rgba(255, 255, 255, 0.955));
+    border: 1.5px solid rgba(32, 181, 171, 0.44);
+    background: linear-gradient(180deg, rgba(255, 255, 253, 0.995), rgba(255, 255, 250, 0.965));
     box-shadow:
       0 18px 40px rgba(32, 169, 159, 0.11),
       0 2px 8px rgba(15, 20, 25, 0.04);
@@ -2348,10 +2348,10 @@ body::before {
     max-width: 300px;
     height: 64px;
     min-height: 64px;
-    bottom: max(26px, env(safe-area-inset-bottom));
+    bottom: max(22px, calc(env(safe-area-inset-bottom) - 8px));
     transform: translateX(-50%);
     border-color: rgba(15, 118, 110, 0.14);
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 253, 0.94);
     box-shadow:
       0 14px 32px rgba(32, 169, 159, 0.10),
       0 3px 10px rgba(15, 20, 25, 0.07);
