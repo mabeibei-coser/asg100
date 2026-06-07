@@ -28,3 +28,8 @@ Thumbs.db
 
 # Design exploration screenshots (设计探索中间产物)
 docs/design/
+
+# 根目录散落的调试/设计残留（非产物，不进仓）
+/mobile-*.png
+/design-qa.md
+.tmp-chrome-*
