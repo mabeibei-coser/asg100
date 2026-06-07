@@ -892,6 +892,94 @@ body::before {
   box-shadow: var(--shadow-sm);
 }
 
+/* —— Hero 玻璃浮卡：个人中心非 VIP / Billing 引导用 —— */
+.glass-hero {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88));
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: var(--r-lg);
+  box-shadow:
+    0 18px 42px rgba(15, 118, 110, 0.11),
+    0 2px 8px rgba(15, 20, 25, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* —— VIP 金色 hero：付费场景的"溢价"质感 —— */
+.vip-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(176, 138, 62, 0.30);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(253, 246, 228, 0.92), transparent 52%),
+    linear-gradient(135deg, #fdf6e4 0%, #f5e8c2 100%);
+  box-shadow:
+    0 14px 36px rgba(176, 138, 62, 0.14),
+    0 2px 6px rgba(15, 20, 25, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.vip-hero::before {
+  content: '';
+  position: absolute;
+  top: -32px;
+  right: -32px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(176, 138, 62, 0.18), transparent 65%);
+  pointer-events: none;
+}
+
+/* —— 金色付费 CTA：让购买动作有溢价感 —— */
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  color: #fff !important;
+  background: linear-gradient(180deg, #c9a050 0%, #a8802f 100%) !important;
+  box-shadow:
+    0 6px 18px rgba(168, 128, 47, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.10) !important;
+  letter-spacing: 0.02em !important;
+  transition: transform .15s ease, box-shadow .2s ease !important;
+}
+
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+  transform: skewX(-20deg);
+  transition: left .8s ease;
+  pointer-events: none;
+}
+
+.btn-gold:hover {
+  box-shadow:
+    0 8px 22px rgba(168, 128, 47, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+.btn-gold:hover::before {
+  left: 130%;
+}
+
+.btn-gold:active {
+  transform: scale(0.985);
+}
+
+.btn-gold.Mui-disabled {
+  background: var(--bg-mute) !important;
+  color: #aeb9c7 !important;
+  box-shadow: none !important;
+}
+
 /* —— 入场动画 —— */
 @keyframes rise {
   from { opacity: 0; transform: translateY(8px); }
