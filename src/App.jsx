@@ -1,8 +1,7 @@
 ﻿import { useState, useEffect, useCallback } from 'react'
 import {
-  Container, Box, Button, CircularProgress, IconButton, Tooltip,
+  Container, Box, Button, CircularProgress, IconButton,
 } from '@mui/material'
-import LogoutIcon from '@mui/icons-material/Logout'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
@@ -20,7 +19,7 @@ import Billing from './components/Billing'
 import Profile from './components/Profile'
 import History from './components/History'
 import Payments from './components/Payments'
-import { fetchMe, fetchMembership, logout } from './utils/api'
+import { fetchMe, fetchMembership, fetchLegal, logout } from './utils/api'
 
 const fmtDate = (ts) => {
   if (!ts) return '—'
@@ -32,9 +31,6 @@ const daysLeft = (ts) => {
   if (!ts) return 0
   return Math.max(0, Math.ceil((ts - Date.now()) / 86400000))
 }
-
-// 手机号中间 4 位打码：18621933756 → 186****3756
-const maskPhone = (p) => (p ? String(p).replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : p)
 
 // 文档库 A800 一库管两域（安防ASG/人才ATA），跳过去必须带 ?category= 让前台展示对应域文档；
 // 不带也行（后端按 cookie 兜底），但显式传更稳，避免双 cookie 场景被识别错。
@@ -132,7 +128,7 @@ function App() {
               <ArrowBackIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <Box sx={{ textAlign: 'center', mb: 2.5 }}>
             <Box sx={{
               width: 46, height: 46, mx: 'auto', mb: 1.75,
               borderRadius: 'var(--r-md)',
@@ -143,14 +139,22 @@ function App() {
               <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 24 }} />
             </Box>
             <div className="h-eyebrow" style={{ marginBottom: 8 }}>asg100 · 会员中心</div>
-            <h1 className="h-display" style={{ fontSize: '1.42rem', lineHeight: 1.2 }}>
+            <h1 className="h-display" style={{ fontSize: '1.42rem', lineHeight: 1.2, marginBottom: 8 }}>
               欢迎使用安全隐患识别平台
             </h1>
+            <p style={{ color: 'var(--ink-2)', fontSize: '0.84rem', lineHeight: 1.55, maxWidth: 280, margin: '0 auto' }}>
+              全场景识别 · 智能分析 · 当前年月更新
+            </p>
           </Box>
-          <LoginForm onLoggedIn={handleLoggedIn} />
+          <LoginForm onLoggedIn={handleLoggedIn} onShowLegal={(type) => setView(type)} />
         </Container>
       </Box>
     )
+  }
+
+  // 协议页（公开，无需登录）：服务使用协议 / 隐私政策
+  if (view === 'terms' || view === 'privacy') {
+    return <LegalPage type={view} onBack={() => setView('login')} />
   }
 
   const isVip = membership?.isVip
@@ -170,9 +174,9 @@ function App() {
   return (
     <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 5 }, pb: { xs: 11, md: 12 } }}>
       <Container maxWidth="md">
-        {/* ═══ 顶部 nav：左 logo + 标题；右 手机号 + 退出 ═══ */}
+        {/* ═══ 顶部 nav：左 logo + 标题（右侧手机号+退出已迁至「我的」页面）═══ */}
         <Box component="nav" className="rise" sx={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          display: 'flex', alignItems: 'center',
           mb: { xs: 4, md: 6 },
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -188,30 +192,6 @@ function App() {
             <Box sx={{ fontSize: '0.95rem', fontWeight: 650, color: 'var(--ink)', letterSpacing: '-0.012em', lineHeight: 1.2 }}>
               安全隐患域 · 会员中心
             </Box>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-            {me ? (
-              <>
-                <Box className="num" sx={{ fontSize: '0.84rem', color: 'var(--ink-2)' }}>{maskPhone(me.phone)}</Box>
-                <Tooltip title="退出登录">
-                  <IconButton size="small" onClick={handleLogout} sx={{
-                    color: 'var(--ink-3)', p: 0.6,
-                    '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-                  }}>
-                    <LogoutIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
-                </Tooltip>
-              </>
-            ) : (
-              <Button onClick={() => setView('login')} disableElevation sx={{
-                px: 1.75, py: 0.6, fontSize: '0.82rem', fontWeight: 600,
-                borderRadius: 'var(--r-sm)', color: '#fff', background: 'var(--ink)',
-                textTransform: 'none', letterSpacing: '0.01em',
-                '&:hover': { background: '#000' },
-              }}>
-                登录
-              </Button>
-            )}
           </Box>
         </Box>
 
@@ -335,7 +315,7 @@ function App() {
         {view !== 'home' && (
           <Box className="surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
             {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
-            {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} onGoPayments={() => setView('payments')} />}
+            {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} onGoPayments={() => setView('payments')} onLogout={handleLogout} />}
             {view === 'history' && <History onBack={() => setView('home')} onBuy={() => setView('billing')} isVip={isVip} />}
             {view === 'payments' && <Payments onBack={() => setView('profile')} />}
           </Box>
@@ -569,6 +549,159 @@ function TextLink({ children, icon, onClick }) {
 
 function Dot() {
   return <Box sx={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-4)' }} />
+}
+
+// 协议页：服务使用协议 / 隐私政策。从 /api/legal/:type 读 Markdown 内容并渲染。
+function LegalPage({ type, onBack }) {
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setData(null); setError(null)
+    fetchLegal(type)
+      .then((d) => { if (!cancelled) setData(d) })
+      .catch((e) => { if (!cancelled) setError(e.message || '加载失败') })
+    return () => { cancelled = true }
+  }, [type])
+
+  const fallbackTitle = type === 'terms' ? '服务使用协议' : '隐私政策'
+
+  return (
+    <Box className="login-page" sx={{
+      minHeight: '100dvh',
+      display: 'flex', flexDirection: 'column',
+      pt: { xs: '4vh', md: '6vh' }, pb: { xs: 4, md: 6 }, px: 2,
+    }}>
+      <Container maxWidth="sm" disableGutters sx={{ px: 0 }}>
+        <Box sx={{ mb: 1.5 }}>
+          <IconButton size="small" onClick={onBack} sx={{
+            color: 'var(--ink-3)',
+            '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
+          }}>
+            <ArrowBackIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Box>
+        <Box sx={{
+          background: 'rgba(255, 255, 255, 0.92)',
+          borderRadius: 'var(--r-lg)',
+          border: '1px solid rgba(15, 118, 110, 0.10)',
+          boxShadow: '0 14px 36px rgba(15, 118, 110, 0.08), 0 2px 6px rgba(15, 20, 25, 0.04)',
+          p: { xs: 2.5, md: 3.5 },
+        }}>
+          <h1 style={{
+            fontSize: '1.25rem', fontWeight: 700, color: 'var(--ink)',
+            marginTop: 0, marginBottom: 16, letterSpacing: '-0.012em',
+          }}>
+            {data?.title || fallbackTitle}
+          </h1>
+          {error && (
+            <p style={{ color: '#b91c1c', fontSize: '0.88rem' }}>加载失败：{error}</p>
+          )}
+          {!error && !data && (
+            <p style={{ color: 'var(--ink-3)', fontSize: '0.88rem' }}>加载中…</p>
+          )}
+          {data && !data.content && (
+            <p style={{ color: 'var(--ink-3)', fontSize: '0.88rem' }}>
+              协议内容暂未配置，请联系平台管理员。
+            </p>
+          )}
+          {data && data.content && <MarkdownView text={data.content} />}
+        </Box>
+      </Container>
+    </Box>
+  )
+}
+
+// 极简 Markdown 渲染：覆盖标题（# ## ###）、段落、列表（- / *）、加粗（**）、链接（[x](url)）
+function MarkdownView({ text }) {
+  const blocks = parseMarkdownBlocks(text)
+  return (
+    <Box sx={{
+      color: 'var(--ink, #1e293b)',
+      fontSize: '0.9rem',
+      lineHeight: 1.75,
+      '& h1, & h2, & h3': { color: 'var(--ink)', fontWeight: 700, letterSpacing: '-0.012em' },
+      '& h1': { fontSize: '1.18rem', mt: 2.5, mb: 1.25 },
+      '& h2': { fontSize: '1.05rem', mt: 2, mb: 1 },
+      '& h3': { fontSize: '0.96rem', mt: 1.5, mb: 0.75 },
+      '& p': { mt: 0, mb: 1.25 },
+      '& ul': { pl: 2.5, mt: 0, mb: 1.25 },
+      '& li': { mb: 0.5 },
+      '& strong': { fontWeight: 700, color: 'var(--ink)' },
+      '& a': { color: 'var(--accent, #0f766e)', textDecoration: 'underline' },
+      '& > *:first-of-type': { mt: 0 },
+    }}>
+      {blocks.map((b, i) => renderBlock(b, i))}
+    </Box>
+  )
+}
+
+function parseMarkdownBlocks(text) {
+  const lines = String(text || '').replace(/\r\n/g, '\n').split('\n')
+  const blocks = []
+  let para = []
+  let list = null
+
+  const flushPara = () => {
+    if (para.length) { blocks.push({ type: 'p', text: para.join(' ') }); para = [] }
+  }
+  const flushList = () => {
+    if (list) { blocks.push(list); list = null }
+  }
+
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (!line) { flushPara(); flushList(); continue }
+    const h = line.match(/^(#{1,3})\s+(.+)$/)
+    if (h) { flushPara(); flushList(); blocks.push({ type: 'h', level: h[1].length, text: h[2] }); continue }
+    const li = line.match(/^[-*]\s+(.+)$/)
+    if (li) {
+      flushPara()
+      if (!list) list = { type: 'ul', items: [] }
+      list.items.push(li[1])
+      continue
+    }
+    flushList()
+    para.push(line)
+  }
+  flushPara(); flushList()
+  return blocks
+}
+
+function renderBlock(b, i) {
+  if (b.type === 'h') {
+    const Tag = `h${b.level}`
+    return <Tag key={i}>{renderInline(b.text)}</Tag>
+  }
+  if (b.type === 'ul') {
+    return (
+      <ul key={i}>
+        {b.items.map((it, j) => <li key={j}>{renderInline(it)}</li>)}
+      </ul>
+    )
+  }
+  return <p key={i}>{renderInline(b.text)}</p>
+}
+
+// 行内：**加粗** 和 [文本](url) 两种
+function renderInline(text) {
+  const out = []
+  let rest = String(text || '')
+  let idx = 0
+  const re = /(\*\*([^*]+)\*\*)|(\[([^\]]+)\]\(([^)]+)\))/
+  let m
+  while ((m = rest.match(re))) {
+    if (m.index > 0) out.push(<span key={idx++}>{rest.slice(0, m.index)}</span>)
+    if (m[1]) {
+      out.push(<strong key={idx++}>{m[2]}</strong>)
+    } else {
+      out.push(<a key={idx++} href={m[5]} target="_blank" rel="noopener noreferrer">{m[4]}</a>)
+    }
+    rest = rest.slice(m.index + m[0].length)
+  }
+  if (rest) out.push(<span key={idx++}>{rest}</span>)
+  return out
 }
 
 export default App

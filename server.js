@@ -19,6 +19,7 @@ const {
   ensureMembership,
   grantVipFromOrder,
   getRecentLedger,
+  isVip,
 } = await import("./lib/membership.js");
 const { getHazardHistory, getHazardReportDetail, getDocDownloadHistory, getRecentHazardReports } = await import("./lib/history.js");
 const { createJsapiOrder, verifyNotify } = await import("./lib/wechat-pay.js");
@@ -29,6 +30,7 @@ const {
   resolveRedirect,
 } = await import("./lib/wechat-oauth.js");
 const { signDownloadToken, verifyDownloadToken } = await import("./lib/download-token.js");
+const { getLegal, LEGAL_TYPES } = await import("./lib/legal.js");
 
 const PORT = Number(process.env.ASG100_API_PORT || process.env.PORT) || 4002;
 const NOTIFY_PATH = "/api/pay/wechat/notify";
@@ -198,12 +200,31 @@ app.get("/api/packages", (req, res) => {
   res.json({ packages: listPackages() });
 });
 
+// ════════════ 法律协议（公开）════════════
+// type: 'terms'（服务使用协议）/ 'privacy'（隐私政策）。admin-hub 后台编辑。
+app.get("/api/legal/:type", (req, res) => {
+  const type = String(req.params.type || "");
+  if (!LEGAL_TYPES.includes(type)) {
+    return res.status(404).json({ error: "协议不存在" });
+  }
+  const row = getLegal(type);
+  if (!row) return res.status(404).json({ error: "协议未配置" });
+  res.json({
+    type: row.type,
+    title: row.title,
+    content: row.content,
+    updatedAt: row.updated_at,
+  });
+});
+
 // ════════════ 我的历史（只读聚合各业务积木的记录）════════════
 
 app.get(
   "/api/me/history",
   requireSession(async (req, res) => {
-    const hazards = getHazardHistory(req.session.phone, 50);
+    // VIP 看最近 300 条，普通用户看最近 20 条
+    const limit = isVip(req.session.phone) ? 300 : 20;
+    const hazards = getHazardHistory(req.session.phone, limit);
     const downloads = getDocDownloadHistory(req.session.phone, 50);
     res.json({ items: hazards, downloads });
   })
