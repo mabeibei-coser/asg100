@@ -358,14 +358,10 @@ function App() {
 }
 
 function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) {
-  const now = new Date()
-  const dbVersionLabel = `大数据库版本 ${now.getFullYear()}年${now.getMonth() + 1}月`
-  const icpLabel = `ASG大数据中心2013-${now.getFullYear()} · 沪ICP备2023040758号-1`
   return (
     <Box className="home-page">
       <main className="home-shell rise">
         <header className="home-title-wrap">
-          <div className="home-db-version">{dbVersionLabel}</div>
           <h1 className="home-title">
             <span className="home-title-main">安全隐患识别</span>
             <span className="home-title-version"><em>5.0</em><span className="home-title-badge">专业版</span></span>
@@ -398,7 +394,6 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
         </section>
 
         <BottomNav active="home" onGoHome={() => {}} onGoHistory={onGoHistory} onGoProfile={onGoProfile} />
-        <div className="home-copyright">{icpLabel}</div>
       </main>
     </Box>
   )
