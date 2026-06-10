@@ -6,7 +6,6 @@ import HistoryIcon from '@mui/icons-material/History';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import LogoutIcon from '@mui/icons-material/Logout';
 
 const fmtDate = (ts) => {
   if (!ts) return '—';
@@ -23,7 +22,7 @@ const daysLeft = (ts) => {
  * 个人中心：VIP 状态卡 + 两个快捷入口（历史记录 / 支付记录）。
  * 支付记录抽到独立视图 Payments，点击按钮路由进入。
  */
-export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPayments, onLogout }) {
+export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPayments }) {
   const isVip = membership?.isVip;
   const left = isVip ? daysLeft(membership.vipExpireAt) : 0;
 
@@ -159,28 +158,6 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
           onClick={onGoPayments}
         />
       </Box>
-
-      {/* 退出登录：低调放在底部 */}
-      {onLogout && (
-        <Box sx={{ textAlign: 'center', mt: 4, mb: 2 }}>
-          <Button
-            onClick={onLogout}
-            startIcon={<LogoutIcon sx={{ fontSize: 16 }} />}
-            disableElevation
-            sx={{
-              px: 2.5, py: 0.75,
-              fontSize: '0.85rem',
-              fontWeight: 500,
-              color: 'var(--ink-3)',
-              textTransform: 'none',
-              borderRadius: 'var(--r-sm)',
-              '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-            }}
-          >
-            退出登录
-          </Button>
-        </Box>
-      )}
     </Box>
   );
 }
