@@ -206,8 +206,11 @@ app.get("/api/packages", (req, res) => {
 app.get(
   "/api/me/history",
   requireSession(async (req, res) => {
-    const hazards = getHazardHistory(req.session.phone, 50);
-    const downloads = getDocDownloadHistory(req.session.phone, 50);
+    // 历史条数按会员档：非 VIP 看最近 20 条，VIP 看最近 300 条
+    const m = getMembership(req.session.phone);
+    const limit = m?.isVip ? 300 : 20;
+    const hazards = getHazardHistory(req.session.phone, limit);
+    const downloads = getDocDownloadHistory(req.session.phone, limit);
     res.json({ items: hazards, downloads });
   })
 );

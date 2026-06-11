@@ -211,30 +211,6 @@ function App() {
               安全隐患域 · 会员中心
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
-            {me ? (
-              <>
-                <Box className="num" sx={{ fontSize: '0.84rem', color: 'var(--ink-2)' }}>{maskPhone(me.phone)}</Box>
-                <Tooltip title="退出登录">
-                  <IconButton size="small" onClick={handleLogout} sx={{
-                    color: 'var(--ink-3)', p: 0.6,
-                    '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-                  }}>
-                    <LogoutIcon sx={{ fontSize: 17 }} />
-                  </IconButton>
-                </Tooltip>
-              </>
-            ) : (
-              <Button onClick={() => setView('login')} disableElevation sx={{
-                px: 1.75, py: 0.6, fontSize: '0.82rem', fontWeight: 600,
-                borderRadius: 'var(--r-sm)', color: '#fff', background: 'var(--ink)',
-                textTransform: 'none', letterSpacing: '0.01em',
-                '&:hover': { background: '#000' },
-              }}>
-                登录
-              </Button>
-            )}
-          </Box>
         </Box>
 
         {view === 'home' && (
