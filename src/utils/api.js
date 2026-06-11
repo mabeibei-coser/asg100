@@ -44,6 +44,9 @@ export const fetchPackages = () => http('GET', '/packages');
 export const fetchHistory = () => http('GET', '/me/history');
 export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`);
 
+// ── 法律文档（公开：服务使用协议 terms / 隐私政策 privacy）──
+export const fetchLegal = (type) => http('GET', `/legal/${type}`);
+
 /**
  * 预检 + 拿签名 URL：挂载时在微信内（cookie 已登录态）调用，服务端返回签名 token。
  * 拼成的下载 URL 自带凭证、10 分钟内有效，用户用「在浏览器中打开」跳过去也能下载。

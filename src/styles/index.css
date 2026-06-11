@@ -2449,3 +2449,14 @@ body::before {
     color: #168f86;
   }
 }
+
+/* —— 数据新鲜度药丸的呼吸绿点（登录页副标下方）—— */
+@keyframes pulse-dot {
+  0%   { box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.32); }
+  70%  { box-shadow: 0 0 0 6px rgba(15, 118, 110, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(15, 118, 110, 0); }
+}
+.pulse-dot { animation: pulse-dot 2.2s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot { animation: none; }
+}

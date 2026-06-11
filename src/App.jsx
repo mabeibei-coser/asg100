@@ -16,6 +16,7 @@ import homeFireAiBg from './assets/home-safety-shield-bg.png'
 import homeFireAiBgWide from './assets/home-safety-shield-bg-wide.png'
 import hazardScanIcon from './assets/hazard-scan-icon.svg'
 import LoginForm from './components/LoginForm'
+import LegalView from './components/LegalView'
 import Billing from './components/Billing'
 import Profile from './components/Profile'
 import History from './components/History'
@@ -35,6 +36,12 @@ const daysLeft = (ts) => {
 
 // 手机号中间 4 位打码：18621933756 → 186****3756
 const maskPhone = (p) => (p ? String(p).replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : p)
+
+// 数据更新标签：始终显示当前真实年月（如「2026年6月」），随系统时间自动走
+const currentMonthLabel = () => {
+  const d = new Date()
+  return `${d.getFullYear()}年${d.getMonth() + 1}月`
+}
 
 // 文档库 A800 一库管两域（安防ASG/人才ATA），跳过去必须带 ?category= 让前台展示对应域文档；
 // 不带也行（后端按 cookie 兜底），但显式传更稳，避免双 cookie 场景被识别错。
@@ -132,7 +139,7 @@ function App() {
               <ArrowBackIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <Box sx={{ textAlign: 'center', mb: 3 }}>
             <Box sx={{
               width: 46, height: 46, mx: 'auto', mb: 1.75,
               borderRadius: 'var(--r-md)',
@@ -143,9 +150,24 @@ function App() {
               <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 24 }} />
             </Box>
             <div className="h-eyebrow" style={{ marginBottom: 8 }}>asg100 · 会员中心</div>
-            <h1 className="h-display" style={{ fontSize: '1.42rem', lineHeight: 1.2 }}>
+            <h1 className="h-display" style={{ fontSize: '1.42rem', lineHeight: 1.2, marginBottom: 10 }}>
               欢迎使用安全隐患识别平台
             </h1>
+            <p style={{ color: 'var(--ink-2)', fontSize: '0.86rem', lineHeight: 1.5, margin: '0 auto' }}>
+              全场景识别 · 智能分析
+            </p>
+            {/* 数据新鲜度药丸：呼吸绿点 + 当前年月，传达「持续更新」的可信感 */}
+            <Box sx={{
+              display: 'inline-flex', alignItems: 'center', gap: 0.7,
+              mt: 1.6, px: 1.3, py: 0.5, borderRadius: 999,
+              background: 'var(--accent-soft)', border: '1px solid rgba(15,118,110,0.18)',
+              color: 'var(--accent-ink)', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.01em',
+            }}>
+              <Box aria-hidden className="pulse-dot" sx={{
+                width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)',
+              }} />
+              数据更新至 {currentMonthLabel()}
+            </Box>
           </Box>
           <LoginForm onLoggedIn={handleLoggedIn} />
         </Container>
@@ -566,4 +588,17 @@ function Dot() {
   return <Box sx={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--ink-4)' }} />
 }
 
-export default App
+// ?legal=terms|privacy → 独立的协议/隐私查看页（无需登录，登录页勾选项新标签打开）
+function getLegalType() {
+  if (typeof window === 'undefined') return null
+  const t = new URLSearchParams(window.location.search).get('legal')
+  return t === 'terms' || t === 'privacy' ? t : null
+}
+
+function Root() {
+  const legalType = getLegalType()
+  if (legalType) return <LegalView type={legalType} />
+  return <App />
+}
+
+export default Root
