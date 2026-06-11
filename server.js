@@ -198,31 +198,8 @@ app.get("/api/packages", (req, res) => {
   res.json({ packages: listPackages() });
 });
 
-// ════════════ 法律文档（公开）════════════
-// 服务使用协议 / 隐私政策正文，由 admin-hub「安防域协议」录入到 site_settings。
-// 登录页勾选项的两个链接 + LegalView 读这里；未配置时返回空串（前台显示占位）。
-const LEGAL_DOCS = {
-  terms: { key: "legal_terms", title: "服务使用协议" },
-  privacy: { key: "legal_privacy", title: "隐私政策" },
-};
-app.get("/api/legal/:type", (req, res) => {
-  const doc = LEGAL_DOCS[req.params.type];
-  if (!doc) return res.status(404).json({ error: "文档不存在" });
-  let row = null;
-  try {
-    row = getDb()
-      .prepare("SELECT value, updated_at FROM site_settings WHERE key = ?")
-      .get(doc.key);
-  } catch {
-    row = null; // 表尚未建（极早期）→ 视为空内容
-  }
-  res.json({
-    type: req.params.type,
-    title: doc.title,
-    content: row?.value || "",
-    updatedAt: row?.updated_at || 0,
-  });
-});
+// 法律文档：ASG100 登录页直接 fetch /ata100/api/legal/:type（两域共用同一份，admin-hub 统一维护）
+// 故本服务不再暴露 /api/legal/:type；site_settings 表也归 ata100 独家拥有。
 
 // ════════════ 我的历史（只读聚合各业务积木的记录）════════════
 

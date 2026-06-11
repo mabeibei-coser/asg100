@@ -45,7 +45,13 @@ export const fetchHistory = () => http('GET', '/me/history');
 export const fetchHazardDetail = (id) => http('GET', `/me/history/hazard/${id}`);
 
 // ── 法律文档（公开：服务使用协议 terms / 隐私政策 privacy）──
-export const fetchLegal = (type) => http('GET', `/legal/${type}`);
+// 跨子路径读 ata100 的同一份文档：ATA / ASG 两域共用，admin-hub「系统设置」统一维护。
+// 同源（h100.jsai100.com）无 CORS 问题。
+export async function fetchLegal(type) {
+  const res = await fetch(`/ata100/api/legal/${type}`);
+  if (!res.ok) throw new Error(`请求失败 (${res.status})`);
+  return res.json();
+}
 
 /**
  * 预检 + 拿签名 URL：挂载时在微信内（cookie 已登录态）调用，服务端返回签名 token。
