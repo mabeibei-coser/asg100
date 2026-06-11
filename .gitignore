@@ -26,6 +26,9 @@ Thumbs.db
 .idea/
 .claude/
 
+# 任务规划文件夹（本地用，不进仓）
+.planning/
+
 # Design exploration screenshots (设计探索中间产物)
 docs/design/
 
