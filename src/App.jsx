@@ -9,12 +9,14 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
 import HistoryIcon from '@mui/icons-material/History'
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
 import './styles/index.css'
-import homeFireAiBg from './assets/home-safety-shield-bg.png'
-import homeFireAiBgWide from './assets/home-safety-shield-bg-wide.png'
-import hazardScanIcon from './assets/hazard-scan-icon.svg'
+import homeHeroDesktop from './assets/home-ref-hero-desktop.jpg'
+import homeHeroMobile from './assets/home-ref-hero-mobile.jpg'
+import homeIdentifyArt from './assets/home-ref-identify.png'
+import homeDocsArt from './assets/home-ref-docs.png'
 import LoginForm from './components/LoginForm'
 import LegalView from './components/LegalView'
 import Billing from './components/Billing'
@@ -356,44 +358,84 @@ function App() {
 }
 
 function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <Box className="home-page">
-      <main className="home-shell rise">
-        <header className="home-title-wrap">
-          <h1 className="home-title">
-            <span className="home-title-main">安全隐患识别</span>
-            <span className="home-title-version"><em>5.0</em><span className="home-title-badge">专业版</span></span>
-          </h1>
-          <div className="home-title-ornament" aria-hidden="true">
-            <span />
+    <Box className="home-page home-redesign-page">
+      <header className="home-desktop-header">
+        <div className="home-brand-block" aria-label="ASG安全隐患识别5.0">
+          <span className="home-brand-mark">
             <ShieldOutlinedIcon />
-            <span />
-          </div>
-        </header>
+            <span>ASG</span>
+          </span>
+          <strong>ASG安全隐患识别5.0</strong>
+        </div>
+        <div className="home-header-version">
+          大数据库版本：<span>{currentMonthLabel()}</span>
+        </div>
+        <nav className="home-desktop-nav" aria-label="桌面导航">
+          <button className="is-active" type="button">首页</button>
+          <button type="button" onClick={onGoHistory}>记录</button>
+          <button type="button" onClick={onGoProfile}>我的</button>
+        </nav>
+      </header>
 
-        <section className="home-visual-stage" aria-label="AI 消防隐患自动检查">
-          <div className="fire-ai-hero" aria-hidden="true">
-            <img className="fire-ai-hero-image fire-ai-hero-image-mobile" src={homeFireAiBg} alt="" />
-            <img className="fire-ai-hero-image fire-ai-hero-image-desktop" src={homeFireAiBgWide} alt="" />
-          </div>
-
-          <section className="home-actions" aria-label="主要功能">
-            <HomeActionCard
-              icon={<img className="home-generated-icon" src={hazardScanIcon} alt="" />}
-              label="隐患识别"
-              onClick={onGoIdentify}
-            />
-            <HomeActionCard
-              icon={<DocsFolderIcon />}
-              label="资料大全"
-              onClick={onGoResources}
-            />
-          </section>
+      <main className="home-redesign-main">
+        <section className="home-hero-copy" aria-labelledby="home-main-title">
+          <div className="home-mobile-version">大数据库版本：<span>{currentMonthLabel()}</span></div>
+          <h1 id="home-main-title">安全隐患识别5.0</h1>
+          <div className="home-title-line" aria-hidden="true" />
+          <p>汇聚全域安全数据 · 智能识别风险隐患 · 辅助安全管理</p>
         </section>
 
-        <BottomNav active="home" onGoHome={() => {}} onGoHistory={onGoHistory} onGoProfile={onGoProfile} />
+        <section className="home-hero-art" aria-label="安全数据主视觉">
+          <picture>
+            <source media="(max-width: 767px)" srcSet={homeHeroMobile} />
+            <img src={homeHeroDesktop} alt="" />
+          </picture>
+        </section>
+
+        <section className="home-entry-list" aria-label="主要功能入口">
+          <HomeEntryCard
+            image={homeIdentifyArt}
+            title="隐患识别"
+            desc="图像识别 · 智能分析 · 风险定位"
+            onClick={onGoIdentify}
+          />
+          <HomeEntryCard
+            image={homeDocsArt}
+            title="资料大全"
+            desc="法规标准 · 案例库 · 知识图谱"
+            onClick={onGoResources}
+          />
+        </section>
       </main>
+
+      <footer className="home-legal-footer">
+        ASG大数据中心2013-{currentYear} · 沪ICP备2023040758号-1
+      </footer>
+
+      <div className="home-mobile-nav">
+        <BottomNav active="home" onGoHome={() => {}} onGoHistory={onGoHistory} onGoProfile={onGoProfile} />
+      </div>
     </Box>
+  )
+}
+
+function HomeEntryCard({ image, title, desc, onClick }) {
+  return (
+    <button className="home-entry-card" type="button" onClick={onClick}>
+      <span className="home-entry-image">
+        <img src={image} alt="" />
+      </span>
+      <span className="home-entry-copy">
+        <strong>{title}</strong>
+        <span>{desc}</span>
+      </span>
+      <span className="home-entry-arrow" aria-hidden="true">
+        <ChevronRightIcon />
+      </span>
+    </button>
   )
 }
 
