@@ -127,7 +127,7 @@ function App() {
   // 登录界面：顶对齐 + 纸感背景，与首页同款品牌底；左上角可返回首页
   if (showLogin) {
     return (
-      <Box className="login-page" sx={{
+      <Box className="login-page asg-subpage-bg" sx={{
         minHeight: '100dvh',
         display: 'flex', flexDirection: 'column',
         pt: { xs: '6vh', md: '8vh' }, pb: { xs: 4, md: 6 }, px: 2,
@@ -192,15 +192,15 @@ function App() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', py: { xs: 3, md: 5 }, pb: { xs: 11, md: 12 } }}>
-      <Container maxWidth="md">
+    <Box className="app-page asg-subpage-bg" sx={{ minHeight: '100vh', py: { xs: 2, md: 0 }, pb: { xs: 11, md: 0 } }}>
+      <Container className="app-container" maxWidth="lg">
         {/* ═══ 顶部 nav：左 logo + 标题；右 手机号 + 退出 ═══ */}
-        <Box component="nav" className="rise" sx={{
+        <Box component="nav" className="app-topbar rise" sx={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          mb: { xs: 4, md: 6 },
+          mb: { xs: 2.5, md: 4 },
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box sx={{
+            <Box className="app-brand-icon" sx={{
               width: 32, height: 32, borderRadius: 'var(--r-sm)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'linear-gradient(180deg, #134e4a 0%, #0f766e 100%)',
@@ -209,7 +209,7 @@ function App() {
             }}>
               <ShieldOutlinedIcon sx={{ color: '#fff', fontSize: 18 }} />
             </Box>
-            <Box sx={{ fontSize: '0.95rem', fontWeight: 650, color: 'var(--ink)', letterSpacing: '-0.012em', lineHeight: 1.2 }}>
+            <Box className="app-brand-title" sx={{ fontSize: '0.95rem', fontWeight: 650, color: 'var(--ink)', letterSpacing: '-0.012em', lineHeight: 1.2 }}>
               安全隐患域 · 会员中心
             </Box>
           </Box>
@@ -343,7 +343,7 @@ function App() {
         )}
 
         {view !== 'home' && (
-          <Box className="surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
+          <Box className="surface app-surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
             {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
             {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} onGoPayments={() => setView('payments')} />}
             {view === 'history' && <History onBack={() => setView('home')} onBuy={() => setView('billing')} isVip={isVip} />}
@@ -351,7 +351,7 @@ function App() {
           </Box>
         )}
 
-        <Box component="footer" sx={{ textAlign: 'center', mt: 5, pb: 3 }}>
+        <Box className="app-footer" component="footer" sx={{ textAlign: 'center', mt: 5, pb: 3 }}>
           <Box sx={{ fontSize: '0.72rem', color: 'var(--ink-3)', letterSpacing: '0.04em' }}>
             谨世 ASG 人工智能实验室 出品
           </Box>
@@ -393,7 +393,10 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
       <main className="home-redesign-main">
         <section className="home-hero-copy" aria-labelledby="home-main-title">
           <div className="home-mobile-version">大数据库版本：<span>{currentMonthLabel()}</span></div>
-          <h1 id="home-main-title">安全隐患识别5.0</h1>
+          <h1 id="home-main-title">
+            <span className="home-title-text">安全隐患识别5.0</span>
+            <span className="home-title-badge">专业版</span>
+          </h1>
           <div className="home-title-line" aria-hidden="true" />
           <p>
             <span className="home-copy-desktop">汇聚全域安全数据 · 智能识别风险隐患 · 辅助安全管理</span>

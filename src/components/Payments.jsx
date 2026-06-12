@@ -23,7 +23,7 @@ export default function Payments({ onBack }) {
   }, []);
 
   return (
-    <Box sx={{ maxWidth: 540, mx: 'auto' }}>
+    <Box className="subpage-content payments-page" sx={{ maxWidth: 540, mx: 'auto' }}>
       {/* 顶部返回 + 标题 + 笔数 */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
         <IconButton size="small" onClick={onBack} sx={{

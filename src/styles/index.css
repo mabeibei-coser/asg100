@@ -2471,6 +2471,8 @@ body::before {
     linear-gradient(90deg, #fff 0%, #fff 39%, rgba(255, 255, 255, 0.18) 56%, rgba(248, 253, 252, 0.04) 100%),
     #fbfefd;
   overflow: hidden;
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+  color: #073c2c;
 }
 
 .home-desktop-header {
@@ -2496,7 +2498,7 @@ body::before {
 
 .home-brand-block strong {
   font-size: clamp(1.08rem, 1.25vw, 1.32rem);
-  font-weight: 850;
+  font-weight: 820;
   line-height: 1;
   white-space: nowrap;
 }
@@ -2528,14 +2530,14 @@ body::before {
 .home-header-version {
   color: #4e5963;
   font-size: 1rem;
-  font-weight: 560;
+  font-weight: 540;
   white-space: nowrap;
 }
 
 .home-header-version span,
 .home-mobile-version span {
   color: #07623f;
-  font-weight: 700;
+  font-weight: 760;
 }
 
 .home-desktop-nav {
@@ -2553,7 +2555,7 @@ body::before {
   cursor: pointer;
   font-family: inherit;
   font-size: 1.02rem;
-  font-weight: 650;
+  font-weight: 620;
   letter-spacing: 0;
   padding: 0 2px;
 }
@@ -2605,10 +2607,35 @@ body::before {
   margin: 0;
   color: #073c2c;
   font-size: clamp(3.8rem, 5.2vw, 5.85rem);
-  font-weight: 900;
+  font-weight: 860;
   line-height: 1.02;
   letter-spacing: 0;
   white-space: nowrap;
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.home-title-text {
+  display: inline-block;
+}
+
+.home-title-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  margin-top: 0.08em;
+  padding: 0.24em 0.44em 0.22em;
+  border-radius: 3px;
+  background: #0b7655;
+  color: #fff;
+  font-size: 0.17em;
+  font-weight: 780;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 5px 12px rgba(8, 96, 68, 0.18);
 }
 
 .home-title-line {
@@ -2623,7 +2650,7 @@ body::before {
   margin: 0;
   color: #4f5963;
   font-size: clamp(1.08rem, 1.35vw, 1.38rem);
-  font-weight: 560;
+  font-weight: 520;
   line-height: 1.65;
   white-space: nowrap;
 }
@@ -2710,13 +2737,29 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 }
 
 .home-entry-image img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+
+.home-entry-card:first-child .home-entry-image {
+  padding: 0;
+}
+
+.home-entry-card:first-child .home-entry-image img {
+  width: 100%;
+  height: 100%;
+}
+
+.home-entry-card:first-child .home-entry-image::after {
+  content: none;
 }
 
 .home-entry-copy {
@@ -2728,7 +2771,7 @@ body::before {
 .home-entry-copy strong {
   color: #07583e;
   font-size: clamp(1.72rem, 2.3vw, 2.28rem);
-  font-weight: 880;
+  font-weight: 800;
   line-height: 1.1;
   letter-spacing: 0;
 }
@@ -2736,7 +2779,7 @@ body::before {
 .home-entry-copy span {
   color: #4f5963;
   font-size: clamp(0.98rem, 1.16vw, 1.18rem);
-  font-weight: 520;
+  font-weight: 500;
   line-height: 1.45;
   white-space: nowrap;
 }
@@ -2762,8 +2805,8 @@ body::before {
   place-items: center;
   border-top: 1px solid rgba(12, 74, 63, 0.08);
   background: rgba(255, 255, 255, 0.88);
-  color: rgba(116, 126, 137, 0.70);
-  font-size: 0.96rem;
+  color: rgba(116, 126, 137, 0.44);
+  font-size: 0.78rem;
   font-weight: 520;
   line-height: 1;
   letter-spacing: 0;
@@ -2844,33 +2887,44 @@ body::before {
 
   .home-hero-copy {
     order: 1;
-    padding: 16px 18px 0;
+    padding: 10px 14px 0;
   }
 
   .home-mobile-version {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 10px;
+    gap: 5px;
+    margin: 0 0 8px -1px;
     color: #65707a;
-    font-size: clamp(0.72rem, 3.35vw, 0.86rem);
-    font-weight: 650;
+    font-size: clamp(0.56rem, 2.55vw, 0.66rem);
+    font-weight: 560;
     line-height: 1.25;
+    white-space: nowrap;
   }
 
   .home-mobile-version::before {
     content: '';
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 999px;
     background: #16845f;
     flex: 0 0 auto;
   }
 
   .home-hero-copy h1 {
-    font-size: clamp(2.18rem, 9.6vw, 2.86rem);
+    font-size: clamp(2.04rem, 9.05vw, 2.62rem);
+    font-weight: 850;
     line-height: 1.08;
     white-space: nowrap;
+  }
+
+  .home-title-badge {
+    margin-left: 4px;
+    margin-top: 0;
+    padding: 0.24em 0.42em 0.22em;
+    border-radius: 2px;
+    font-size: 0.19em;
+    transform: translateY(0.1em);
   }
 
   .home-title-line {
@@ -2911,67 +2965,107 @@ body::before {
   .home-entry-list {
     order: 3;
     display: grid;
-    gap: 16px;
-    padding: 18px 18px 22px;
+    gap: 14px;
+    padding: 18px 18px 20px;
   }
 
   .home-entry-card {
-    min-height: 124px;
-    border-radius: 10px;
-    grid-template-columns: minmax(0, 1fr) 42% 26px;
-    gap: 8px;
-    padding: 14px 12px 14px 18px;
+    min-height: 100px;
+    border-radius: 5px;
+    border-color: rgba(12, 114, 83, 0.15);
+    grid-template-columns: minmax(0, 1fr) 36% 18px;
+    gap: 6px;
+    padding: 10px 9px 10px 16px;
     box-shadow: none;
-    background: linear-gradient(90deg, rgba(251, 255, 253, 0.98), rgba(238, 251, 247, 0.74));
+    background:
+      linear-gradient(90deg, rgba(248, 255, 252, 0.98), rgba(232, 249, 244, 0.58)),
+      #f6fffc;
   }
 
   .home-entry-image {
     grid-column: 2;
     grid-row: 1;
     width: 100%;
-    height: 94px;
+    height: 84px;
     justify-self: end;
   }
 
   .home-entry-copy {
     grid-column: 1;
     grid-row: 1;
-    gap: 14px;
+    gap: 9px;
     align-self: center;
   }
 
   .home-entry-copy strong {
-    font-size: clamp(1.7rem, 7.9vw, 2.18rem);
+    font-size: clamp(1.12rem, 5.25vw, 1.28rem);
+    font-weight: 760;
+    line-height: 1.12;
   }
 
   .home-entry-copy span {
     color: #4f5963;
-    font-size: clamp(0.82rem, 3.85vw, 1rem);
-    line-height: 1.4;
-    white-space: normal;
+    font-size: clamp(0.52rem, 2.45vw, 0.60rem);
+    font-weight: 500;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  .home-entry-card:first-child .home-entry-image {
+    padding: 0;
+  }
+
+  .home-entry-card:first-child .home-entry-image img {
+    width: 108%;
+    height: 108%;
+    transform: translate(-1%, -3%);
+  }
+
+  .home-entry-card:first-child .home-entry-image::after {
+    content: '';
+    position: absolute;
+    inset: 9px 11px 7px 9px;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      linear-gradient(#0b7655, #0b7655) left top / 14px 2px no-repeat,
+      linear-gradient(#0b7655, #0b7655) left top / 2px 14px no-repeat,
+      linear-gradient(#0b7655, #0b7655) right top / 14px 2px no-repeat,
+      linear-gradient(#0b7655, #0b7655) right top / 2px 14px no-repeat,
+      linear-gradient(#0b7655, #0b7655) left bottom / 14px 2px no-repeat,
+      linear-gradient(#0b7655, #0b7655) left bottom / 2px 14px no-repeat,
+      linear-gradient(#0b7655, #0b7655) right bottom / 14px 2px no-repeat,
+      linear-gradient(#0b7655, #0b7655) right bottom / 2px 14px no-repeat;
+    opacity: 0.95;
+  }
+
+  .home-entry-card:nth-child(2) .home-entry-image img {
+    width: 116%;
+    height: 116%;
+    transform: translate(-3%, -3%);
   }
 
   .home-entry-arrow {
     grid-column: 3;
     grid-row: 1;
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 24px;
     box-shadow: none;
     background: transparent;
     align-self: center;
   }
 
   .home-entry-arrow svg {
-    font-size: 30px;
+    font-size: 23px;
   }
 
   .home-legal-footer {
     height: auto;
-    padding: 20px 14px 16px;
+    padding: 16px 14px 12px;
     border-top: 0;
     background: #fff;
-    color: rgba(128, 137, 148, 0.66);
-    font-size: clamp(0.76rem, 3.45vw, 1rem);
+    color: rgba(128, 137, 148, 0.42);
+    font-size: clamp(0.58rem, 2.65vw, 0.68rem);
     line-height: 1.35;
     white-space: normal;
     text-align: center;
@@ -3015,10 +3109,271 @@ body::before {
   }
 
   .home-entry-card {
-    min-height: 126px;
+    min-height: 100px;
   }
 
   .home-entry-image {
-    height: 92px;
+    height: 80px;
+  }
+}
+
+/* —— 内页统一版：沿用首页 ASG 大数据中心风格 —— */
+.asg-subpage-bg {
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(90deg, #fff 0%, #fff 42%, rgba(255, 255, 255, 0.20) 62%, rgba(248, 253, 252, 0.06) 100%),
+    linear-gradient(180deg, #fbfefd 0%, #f7fbf9 100%);
+  overflow-x: hidden;
+}
+
+.asg-subpage-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(58vw, 760px);
+  z-index: -2;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.26) 42%, rgba(255, 255, 255, 0) 100%),
+    url('../assets/home-ref-hero-desktop.jpg') center / cover no-repeat;
+  opacity: 0.34;
+  filter: saturate(0.92) contrast(0.98);
+}
+
+.asg-subpage-bg::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 18%, rgba(12, 114, 83, 0.07), transparent 30%),
+    radial-gradient(circle at 82% 76%, rgba(12, 114, 83, 0.08), transparent 34%);
+}
+
+.app-container {
+  min-height: 100dvh;
+  padding: 30px 44px 104px;
+}
+
+.app-topbar {
+  min-height: 76px;
+  padding: 0 24px;
+  border: 1px solid rgba(12, 74, 63, 0.10);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 28px rgba(14, 91, 72, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.app-brand-icon {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: #0b6b4d !important;
+  border: 1px solid rgba(12, 114, 83, 0.18);
+  box-shadow: 0 8px 20px rgba(14, 91, 72, 0.10) !important;
+}
+
+.app-brand-icon svg {
+  color: #0b6b4d !important;
+  font-size: 24px !important;
+  stroke-width: 1.55;
+}
+
+.app-brand-title {
+  color: #073c2c !important;
+  font-size: 1.08rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-surface {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  border-radius: 12px !important;
+  border: 1px solid rgba(12, 114, 83, 0.18) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(245, 254, 251, 0.94)),
+    #fbfffd !important;
+  box-shadow: 0 16px 36px rgba(14, 91, 72, 0.10) !important;
+}
+
+.app-surface::before {
+  content: '';
+  display: block;
+  width: 66px;
+  height: 5px;
+  margin: 0 0 22px;
+  border-radius: 999px;
+  background: #199364;
+}
+
+.subpage-content h2 {
+  color: #073c2c !important;
+  font-size: 1.24rem !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+}
+
+.subpage-content .MuiIconButton-root {
+  border: 1px solid rgba(12, 114, 83, 0.12);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.subpage-content .MuiIconButton-root:hover {
+  border-color: rgba(12, 114, 83, 0.28);
+  background: rgba(238, 251, 247, 0.88) !important;
+}
+
+.subpage-content [role='button'],
+.profile-page button,
+.history-page button,
+.payments-page button {
+  transition: transform 0.16s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.subpage-content [role='button']:hover,
+.profile-page button:hover,
+.history-page button:hover,
+.payments-page button:hover {
+  box-shadow: 0 12px 28px rgba(14, 91, 72, 0.08);
+}
+
+.glass-hero,
+.vip-hero {
+  border-radius: 12px !important;
+}
+
+.glass-hero {
+  border-color: rgba(12, 114, 83, 0.20) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(238, 251, 247, 0.76)) !important;
+  box-shadow: 0 14px 32px rgba(14, 91, 72, 0.09) !important;
+}
+
+.vip-hero {
+  box-shadow: 0 14px 32px rgba(176, 138, 62, 0.12) !important;
+}
+
+.login-card {
+  border-radius: 12px !important;
+  border: 1px solid rgba(12, 114, 83, 0.18) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(245, 254, 251, 0.94)),
+    #fbfffd !important;
+  box-shadow: 0 16px 36px rgba(14, 91, 72, 0.10) !important;
+}
+
+.legal-panel {
+  border-radius: 12px !important;
+  border-color: rgba(12, 114, 83, 0.18) !important;
+  box-shadow: 0 16px 36px rgba(14, 91, 72, 0.10) !important;
+}
+
+.legal-page .MuiContainer-root {
+  position: relative;
+}
+
+.legal-page .MuiContainer-root::before {
+  content: '';
+  display: block;
+  width: 66px;
+  height: 5px;
+  margin: 0 0 22px;
+  border-radius: 999px;
+  background: #199364;
+}
+
+.app-footer {
+  color: rgba(116, 126, 137, 0.76);
+}
+
+@media (min-width: 960px) {
+  .app-surface {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .asg-subpage-bg {
+    background: #fff;
+  }
+
+  .asg-subpage-bg::before {
+    display: none;
+  }
+
+  .asg-subpage-bg::after {
+    background: linear-gradient(180deg, rgba(238, 251, 247, 0.82) 0%, rgba(255, 255, 255, 0) 240px);
+  }
+
+  .app-container {
+    padding: 0 18px 100px;
+  }
+
+  .app-topbar {
+    min-height: 70px;
+    margin-inline: -18px;
+    padding: 0 18px;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .app-brand-icon {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .app-brand-title {
+    font-size: 0.96rem !important;
+  }
+
+  .app-surface {
+    width: 100%;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    padding: 18px !important;
+  }
+
+  .app-surface::before {
+    width: 56px;
+    height: 4px;
+    margin-bottom: 18px;
+  }
+
+  .login-page {
+    padding-inline: 18px !important;
+  }
+
+  .login-card {
+    box-shadow: none !important;
+  }
+
+  .app-page > .home-bottom-nav {
+    width: 100%;
+    max-width: none;
+    height: 78px;
+    min-height: 78px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-width: 1px 0 0;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 -6px 20px rgba(15, 20, 25, 0.05);
+    transform: none;
+  }
+
+  .app-page > .home-bottom-nav .home-nav-item {
+    height: 72px;
+    font-size: 0.86rem;
+  }
+
+  .app-page > .home-bottom-nav .home-nav-item svg {
+    font-size: 28px;
   }
 }

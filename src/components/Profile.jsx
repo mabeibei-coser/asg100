@@ -27,7 +27,7 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
   const left = isVip ? daysLeft(membership.vipExpireAt) : 0;
 
   return (
-    <Box sx={{ maxWidth: 540, mx: 'auto' }}>
+    <Box className="subpage-content profile-page" sx={{ maxWidth: 540, mx: 'auto' }}>
       {/* 顶部返回 + 标题 */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
         <IconButton size="small" onClick={onBack} sx={{

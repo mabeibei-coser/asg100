@@ -29,7 +29,7 @@ export default function LegalView({ type }) {
   }, [type])
 
   return (
-    <Box className="login-page" sx={{ minHeight: '100dvh', py: { xs: 3, md: 5 }, px: 2 }}>
+    <Box className="login-page asg-subpage-bg legal-page" sx={{ minHeight: '100dvh', py: { xs: 3, md: 5 }, px: 2 }}>
       <Container maxWidth="sm" disableGutters sx={{ px: 0 }}>
         {/* 顶部：品牌 + 关闭（新标签打开，关闭即回到登录页）*/}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -52,7 +52,7 @@ export default function LegalView({ type }) {
           </Tooltip>
         </Box>
 
-        <Box sx={{
+        <Box className="legal-panel" sx={{
           background: 'var(--bg-elev, #fff)', borderRadius: 'var(--r-lg)',
           border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)',
           p: { xs: 2.5, md: 3.5 },

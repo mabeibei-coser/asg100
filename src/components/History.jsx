@@ -114,7 +114,7 @@ export default function History({ onBack, onBuy, isVip }) {
   // ─── 详情视图：照片 + 每条隐患的完整字段（与 A600 当时显示一致）───
   if (detail) {
     return (
-      <Box sx={{ maxWidth: 540, mx: 'auto' }}>
+      <Box className="subpage-content history-detail-page" sx={{ maxWidth: 540, mx: 'auto' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <IconButton size="small" onClick={() => setDetail(null)} sx={{
             color: 'var(--ink-3)', mr: 0.5,
@@ -249,7 +249,7 @@ export default function History({ onBack, onBuy, isVip }) {
   // ─── 列表视图 ───
   const hasItems = items && items.length > 0;
   return (
-    <Box sx={{ maxWidth: 540, mx: 'auto' }}>
+    <Box className="subpage-content history-page" sx={{ maxWidth: 540, mx: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
         <IconButton size="small" onClick={onBack} sx={{
           color: 'var(--ink-3)', mr: 0.5,

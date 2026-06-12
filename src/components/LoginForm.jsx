@@ -104,6 +104,7 @@ export default function LoginForm({ onLoggedIn }) {
   return (
     <Box
       component="form"
+      className="login-card"
       onSubmit={handleSubmit}
       sx={{
         maxWidth: 400,
@@ -133,7 +134,7 @@ export default function LoginForm({ onLoggedIn }) {
         sx={fieldSx}
         error={Boolean(phone) && !phoneValid}
         helperText={phone && !phoneValid ? '手机号格式不正确（应为 1 开头 11 位）' : undefined}
-        FormHelperTextProps={{ sx: { mt: 0.5, ml: 0.5 } }}
+        slotProps={{ formHelperText: { sx: { mt: 0.5, ml: 0.5 } } }}
       />
 
       {/* 验证码 + 获取按钮：flex stretch 让按钮与输入框严格等高对齐 */}

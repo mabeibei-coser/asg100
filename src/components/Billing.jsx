@@ -120,7 +120,7 @@ export default function Billing({ onPaid, onBack }) {
   const selectedPkg = packages.find((p) => p.id === selected);
 
   return (
-    <Box sx={{ maxWidth: 540, mx: 'auto' }}>
+    <Box className="subpage-content billing-page" sx={{ maxWidth: 540, mx: 'auto' }}>
       {/* 顶部返回 */}
       <Box sx={{ mb: 2 }}>
         <IconButton size="small" onClick={onBack} disabled={loading} sx={{
