@@ -2628,6 +2628,10 @@ body::before {
   white-space: nowrap;
 }
 
+.home-copy-mobile {
+  display: none;
+}
+
 .home-hero-art {
   grid-column: 2;
   grid-row: 1 / 3;
@@ -2840,43 +2844,51 @@ body::before {
 
   .home-hero-copy {
     order: 1;
-    padding: 56px 26px 0;
+    padding: 28px 24px 0;
   }
 
   .home-mobile-version {
     display: block;
-    margin-bottom: 26px;
+    margin-bottom: 18px;
     color: #65707a;
-    font-size: clamp(1.08rem, 5.6vw, 1.48rem);
+    font-size: clamp(1rem, 5.25vw, 1.3rem);
     font-weight: 560;
     line-height: 1.25;
   }
 
   .home-hero-copy h1 {
-    font-size: clamp(2.28rem, 10vw, 3.12rem);
+    font-size: clamp(2.18rem, 9.6vw, 2.86rem);
     line-height: 1.08;
     white-space: nowrap;
   }
 
   .home-title-line {
-    width: 58px;
+    width: 56px;
     height: 4px;
-    margin: 22px 0 22px;
+    margin: 14px 0 18px;
   }
 
   .home-hero-copy p {
     max-width: 96%;
     color: #5a646f;
-    font-size: clamp(1.02rem, 4.8vw, 1.3rem);
-    line-height: 1.95;
+    font-size: clamp(0.92rem, 4.1vw, 1.08rem);
+    line-height: 1.56;
     white-space: normal;
+  }
+
+  .home-copy-desktop {
+    display: none;
+  }
+
+  .home-copy-mobile {
+    display: inline;
   }
 
   .home-hero-art {
     order: 2;
     width: 100%;
-    height: clamp(500px, 64vh, 545px);
-    margin-top: 16px;
+    height: clamp(268px, 70vw, 306px);
+    margin-top: 14px;
     overflow: hidden;
   }
 
@@ -2892,16 +2904,16 @@ body::before {
   .home-entry-list {
     order: 3;
     display: grid;
-    gap: 22px;
-    padding: 54px 26px 28px;
+    gap: 16px;
+    padding: 26px 24px 22px;
   }
 
   .home-entry-card {
-    min-height: 138px;
+    min-height: 124px;
     border-radius: 10px;
     grid-template-columns: minmax(0, 1fr) 42% 26px;
     gap: 8px;
-    padding: 18px 14px 18px 20px;
+    padding: 14px 12px 14px 18px;
     box-shadow: none;
     background: linear-gradient(90deg, rgba(251, 255, 253, 0.98), rgba(238, 251, 247, 0.74));
   }
@@ -2910,7 +2922,7 @@ body::before {
     grid-column: 2;
     grid-row: 1;
     width: 100%;
-    height: 106px;
+    height: 94px;
     justify-self: end;
   }
 
@@ -2922,12 +2934,12 @@ body::before {
   }
 
   .home-entry-copy strong {
-    font-size: clamp(1.96rem, 8.8vw, 2.66rem);
+    font-size: clamp(1.7rem, 7.9vw, 2.18rem);
   }
 
   .home-entry-copy span {
     color: #4f5963;
-    font-size: clamp(0.92rem, 4.2vw, 1.16rem);
+    font-size: clamp(0.82rem, 3.85vw, 1rem);
     line-height: 1.4;
     white-space: normal;
   }
@@ -2948,7 +2960,7 @@ body::before {
 
   .home-legal-footer {
     height: auto;
-    padding: 24px 14px 20px;
+    padding: 20px 14px 16px;
     border-top: 0;
     background: #fff;
     color: rgba(128, 137, 148, 0.66);

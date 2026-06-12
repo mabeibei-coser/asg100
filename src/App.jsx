@@ -385,7 +385,10 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
           <div className="home-mobile-version">大数据库版本：<span>{currentMonthLabel()}</span></div>
           <h1 id="home-main-title">安全隐患识别5.0</h1>
           <div className="home-title-line" aria-hidden="true" />
-          <p>汇聚全域安全数据 · 智能识别风险隐患 · 辅助安全管理</p>
+          <p>
+            <span className="home-copy-desktop">汇聚全域安全数据 · 智能识别风险隐患 · 辅助安全管理</span>
+            <span className="home-copy-mobile">汇聚全域安全数据 · 智能识别风险隐患<br />赋能安全决策 · 守护生命安全<br />共建平安中国</span>
+          </p>
         </section>
 
         <section className="home-hero-art" aria-label="安全数据主视觉">
