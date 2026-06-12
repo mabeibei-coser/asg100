@@ -2909,6 +2909,7 @@ body::before {
     border-radius: 999px;
     background: #16845f;
     flex: 0 0 auto;
+    margin-right: 4px;
   }
 
   .home-hero-copy h1 {
@@ -2976,7 +2977,7 @@ body::before {
     min-height: 105px;
     border-radius: 5px;
     border-color: rgba(12, 114, 83, 0.15);
-    grid-template-columns: minmax(0, 1fr) minmax(112px, 42%) 18px;
+    grid-template-columns: minmax(0, 1fr) minmax(122px, 44%) 18px;
     gap: 8px;
     padding: 11px 7px 11px 23px;
     box-shadow: none;
@@ -3021,7 +3022,7 @@ body::before {
   .home-entry-card:first-child .home-entry-image img {
     width: 112%;
     height: 112%;
-    transform: translate(-3%, -5%);
+    transform: translate(-7%, -5%);
   }
 
   .home-entry-card:first-child .home-entry-image::after {
@@ -3031,7 +3032,7 @@ body::before {
   .home-entry-card:nth-child(2) .home-entry-image img {
     width: 120%;
     height: 120%;
-    transform: translate(-6%, -4%);
+    transform: translate(-10%, -4%);
   }
 
   .home-entry-arrow {
