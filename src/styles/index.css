@@ -2844,16 +2844,27 @@ body::before {
 
   .home-hero-copy {
     order: 1;
-    padding: 28px 24px 0;
+    padding: 16px 18px 0;
   }
 
   .home-mobile-version {
-    display: block;
-    margin-bottom: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
     color: #65707a;
-    font-size: clamp(1rem, 5.25vw, 1.3rem);
-    font-weight: 560;
+    font-size: clamp(0.72rem, 3.35vw, 0.86rem);
+    font-weight: 650;
     line-height: 1.25;
+  }
+
+  .home-mobile-version::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #16845f;
+    flex: 0 0 auto;
   }
 
   .home-hero-copy h1 {
@@ -2865,15 +2876,11 @@ body::before {
   .home-title-line {
     width: 56px;
     height: 4px;
-    margin: 14px 0 18px;
+    margin: 10px 0 12px;
   }
 
   .home-hero-copy p {
-    max-width: 96%;
-    color: #5a646f;
-    font-size: clamp(0.92rem, 4.1vw, 1.08rem);
-    line-height: 1.56;
-    white-space: normal;
+    display: none;
   }
 
   .home-copy-desktop {
@@ -2887,8 +2894,8 @@ body::before {
   .home-hero-art {
     order: 2;
     width: 100%;
-    height: clamp(268px, 70vw, 306px);
-    margin-top: 14px;
+    height: clamp(252px, 67vw, 292px);
+    margin-top: 6px;
     overflow: hidden;
   }
 
@@ -2905,7 +2912,7 @@ body::before {
     order: 3;
     display: grid;
     gap: 16px;
-    padding: 26px 24px 22px;
+    padding: 18px 18px 22px;
   }
 
   .home-entry-card {
