@@ -1,7 +1,7 @@
 {
   "name": "asg100",
   "private": true,
-  "version": "0.1.45",
+  "version": "0.1.46",
   "type": "module",
   "description": "安全隐患识别平台 5.0 专业版 - 隐患识别 + 短信登录 + VIP 会员 + 安防文档库",
   "scripts": {

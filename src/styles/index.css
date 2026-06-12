@@ -3022,21 +3022,7 @@ body::before {
   }
 
   .home-entry-card:first-child .home-entry-image::after {
-    content: '';
-    position: absolute;
-    inset: 9px 11px 7px 9px;
-    z-index: 2;
-    pointer-events: none;
-    background:
-      linear-gradient(#0b7655, #0b7655) left top / 14px 2px no-repeat,
-      linear-gradient(#0b7655, #0b7655) left top / 2px 14px no-repeat,
-      linear-gradient(#0b7655, #0b7655) right top / 14px 2px no-repeat,
-      linear-gradient(#0b7655, #0b7655) right top / 2px 14px no-repeat,
-      linear-gradient(#0b7655, #0b7655) left bottom / 14px 2px no-repeat,
-      linear-gradient(#0b7655, #0b7655) left bottom / 2px 14px no-repeat,
-      linear-gradient(#0b7655, #0b7655) right bottom / 14px 2px no-repeat,
-      linear-gradient(#0b7655, #0b7655) right bottom / 2px 14px no-repeat;
-    opacity: 0.95;
+    content: none;
   }
 
   .home-entry-card:nth-child(2) .home-entry-image img {
