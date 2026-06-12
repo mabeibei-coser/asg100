@@ -36,8 +36,8 @@ const daysLeft = (ts) => {
   return Math.max(0, Math.ceil((ts - Date.now()) / 86400000))
 }
 
-// 手机号中间 4 位打码：18621933756 → 186****3756
-const maskPhone = (p) => (p ? String(p).replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : p)
+// 手机号中间 6 位打码：18621933756 → 186******56
+const maskPhone = (p) => (p ? String(p).replace(/(\d{3})\d{6}(\d{2})/, '$1******$2') : p)
 
 // 数据更新标签：始终显示当前真实年月（如「2026年6月」），随系统时间自动走
 const currentMonthLabel = () => {
@@ -213,6 +213,16 @@ function App() {
               安全隐患域 · 会员中心
             </Box>
           </Box>
+          {me?.phone && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+              <Box sx={{ fontSize: '0.82rem', color: 'var(--ink-2)', fontWeight: 500 }}>
+                {maskPhone(me.phone)}
+              </Box>
+              <IconButton size="small" onClick={handleLogout} sx={{ color: 'var(--ink-3)', p: 0.5 }}>
+                <LogoutIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Box>
+          )}
         </Box>
 
         {view === 'home' && (
