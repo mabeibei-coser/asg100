@@ -2977,9 +2977,9 @@ body::before {
     min-height: 105px;
     border-radius: 5px;
     border-color: rgba(12, 114, 83, 0.15);
-    grid-template-columns: minmax(0, 1fr) minmax(122px, 44%) 18px;
-    gap: 8px;
-    padding: 11px 7px 11px 23px;
+    grid-template-columns: minmax(0, 1fr) 112px 20px;
+    gap: 6px;
+    padding: 11px 8px 11px 23px;
     box-shadow: none;
     background:
       linear-gradient(90deg, rgba(248, 255, 252, 0.98), rgba(232, 249, 244, 0.58)),
@@ -2989,9 +2989,18 @@ body::before {
   .home-entry-image {
     grid-column: 2;
     grid-row: 1;
-    width: 100%;
-    height: 88px;
+    width: 112px;
+    height: 86px;
     justify-self: end;
+    overflow: hidden;
+  }
+
+  .home-entry-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
   }
 
   .home-entry-copy {
@@ -3020,9 +3029,10 @@ body::before {
   }
 
   .home-entry-card:first-child .home-entry-image img {
-    width: 112%;
-    height: 112%;
-    transform: translate(-7%, -5%);
+    width: 100%;
+    height: 100%;
+    object-position: center center;
+    transform: none;
   }
 
   .home-entry-card:first-child .home-entry-image::after {
@@ -3030,9 +3040,12 @@ body::before {
   }
 
   .home-entry-card:nth-child(2) .home-entry-image img {
-    width: 120%;
-    height: 120%;
-    transform: translate(-10%, -4%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    transform: scale(1.16);
+    transform-origin: center center;
   }
 
   .home-entry-arrow {
@@ -3105,7 +3118,7 @@ body::before {
   }
 
   .home-entry-image {
-    height: 84px;
+    height: 86px;
   }
 }
 
