@@ -392,7 +392,7 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
 
       <main className="home-redesign-main">
         <section className="home-hero-copy" aria-labelledby="home-main-title">
-          <div className="home-mobile-version">大数据库版本：<span>{currentMonthLabel()}</span></div>
+          <div className="home-mobile-version">大数据库版本<span>{currentMonthLabel()}</span></div>
           <h1 id="home-main-title">
             <span className="home-title-text">安全隐患识别5.0</span>
             <span className="home-title-badge">专业版</span>

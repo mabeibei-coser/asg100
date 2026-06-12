@@ -2893,7 +2893,7 @@ body::before {
   .home-mobile-version {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 0;
     margin: 0 0 8px -1px;
     color: #65707a;
     font-size: clamp(0.56rem, 2.55vw, 0.66rem);
@@ -2965,17 +2965,20 @@ body::before {
   .home-entry-list {
     order: 3;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px;
-    padding: 18px 18px 20px;
+    width: 100%;
+    padding: 18px 5px 20px;
   }
 
   .home-entry-card {
-    min-height: 100px;
+    width: 100%;
+    min-height: 105px;
     border-radius: 5px;
     border-color: rgba(12, 114, 83, 0.15);
-    grid-template-columns: minmax(0, 1fr) 36% 18px;
-    gap: 6px;
-    padding: 10px 9px 10px 16px;
+    grid-template-columns: minmax(0, 1fr) minmax(112px, 42%) 18px;
+    gap: 8px;
+    padding: 11px 7px 11px 23px;
     box-shadow: none;
     background:
       linear-gradient(90deg, rgba(248, 255, 252, 0.98), rgba(232, 249, 244, 0.58)),
@@ -2986,19 +2989,19 @@ body::before {
     grid-column: 2;
     grid-row: 1;
     width: 100%;
-    height: 84px;
+    height: 88px;
     justify-self: end;
   }
 
   .home-entry-copy {
     grid-column: 1;
     grid-row: 1;
-    gap: 9px;
+    gap: 10px;
     align-self: center;
   }
 
   .home-entry-copy strong {
-    font-size: clamp(1.12rem, 5.25vw, 1.28rem);
+    font-size: clamp(1.18rem, 5.45vw, 1.38rem);
     font-weight: 760;
     line-height: 1.12;
   }
@@ -3016,9 +3019,9 @@ body::before {
   }
 
   .home-entry-card:first-child .home-entry-image img {
-    width: 108%;
-    height: 108%;
-    transform: translate(-1%, -3%);
+    width: 112%;
+    height: 112%;
+    transform: translate(-3%, -5%);
   }
 
   .home-entry-card:first-child .home-entry-image::after {
@@ -3026,9 +3029,9 @@ body::before {
   }
 
   .home-entry-card:nth-child(2) .home-entry-image img {
-    width: 116%;
-    height: 116%;
-    transform: translate(-3%, -3%);
+    width: 120%;
+    height: 120%;
+    transform: translate(-6%, -4%);
   }
 
   .home-entry-arrow {
@@ -3039,6 +3042,7 @@ body::before {
     box-shadow: none;
     background: transparent;
     align-self: center;
+    justify-self: end;
   }
 
   .home-entry-arrow svg {
@@ -3090,16 +3094,17 @@ body::before {
   }
 
   .home-entry-list {
-    padding-left: 22px;
-    padding-right: 22px;
+    padding-left: 5px;
+    padding-right: 5px;
   }
 
   .home-entry-card {
-    min-height: 100px;
+    min-height: 102px;
+    padding-left: 21px;
   }
 
   .home-entry-image {
-    height: 80px;
+    height: 84px;
   }
 }
 
