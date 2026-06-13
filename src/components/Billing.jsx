@@ -140,8 +140,6 @@ export default function Billing({ onPaid, onBack }) {
         }}>
           选择套餐
         </Box>
-        <Box sx={{ flex: 1 }} />
-        <Box className="h-eyebrow num" sx={{ fontSize: '0.68rem', color: 'var(--ink-3)' }}>{todayLabel()}</Box>
       </Box>
 
       {/* 信任元素：微信支付 + 加密 + 即时生效 */}
