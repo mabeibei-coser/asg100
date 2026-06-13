@@ -400,7 +400,7 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
           <div className="home-title-line" aria-hidden="true" />
           <p>
             <span className="home-copy-desktop">汇聚全域安全数据 · 智能识别风险隐患 · 辅助安全管理</span>
-            <span className="home-copy-mobile">汇聚全域安全数据 · 智能识别风险隐患<br />赋能安全决策 · 守护生命安全<br />共建平安中国</span>
+            <span className="home-copy-mobile">汇聚全域安全数据 · 智能识别风险隐患 · 赋能安全决策<br />守护生命安全 · 共建平安中国</span>
           </p>
         </section>
 
