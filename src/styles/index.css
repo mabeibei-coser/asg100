@@ -3420,3 +3420,419 @@ body::before {
     font-size: 28px;
   }
 }
+
+/* ASG homepage-aligned subpage polish. Keep this as the final skin layer. */
+.app-page.asg-subpage-bg,
+.login-page.asg-subpage-bg,
+.legal-page.asg-subpage-bg {
+  --asg-brand: #0b7655;
+  --asg-brand-dark: #073c2c;
+  --asg-brand-soft: #eefbf7;
+  --asg-text: #073c2c;
+  --asg-muted: #4f5963;
+  --asg-line: rgba(12, 114, 83, 0.18);
+  --asg-line-soft: rgba(12, 74, 63, 0.10);
+  --asg-shadow: 0 16px 36px rgba(14, 91, 72, 0.10);
+  background:
+    linear-gradient(90deg, #fff 0%, #fff 39%, rgba(255, 255, 255, 0.36) 58%, rgba(248, 253, 252, 0.08) 100%),
+    #fbfefd;
+  color: var(--asg-text);
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.app-page.asg-subpage-bg::before,
+.login-page.asg-subpage-bg::before,
+.legal-page.asg-subpage-bg::before {
+  width: min(56vw, 780px);
+  opacity: 0.28;
+  filter: saturate(0.94) contrast(0.99);
+}
+
+.app-page.asg-subpage-bg::after,
+.login-page.asg-subpage-bg::after,
+.legal-page.asg-subpage-bg::after {
+  background:
+    radial-gradient(circle at 13% 18%, rgba(12, 114, 83, 0.055), transparent 30%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.68) 44%, rgba(255, 255, 255, 0) 100%);
+}
+
+.app-container {
+  width: min(100%, 1180px) !important;
+  max-width: 1180px !important;
+  padding: clamp(22px, 3.4vw, 40px) clamp(22px, 4.2vw, 56px) 110px !important;
+}
+
+.app-topbar {
+  min-height: 84px !important;
+  padding: 0 28px !important;
+  margin-bottom: clamp(26px, 4vh, 44px) !important;
+  border: 1px solid var(--asg-line-soft) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.91) !important;
+  box-shadow: 0 10px 28px rgba(14, 91, 72, 0.06) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.app-brand-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: var(--asg-brand) !important;
+  border: 1px solid rgba(12, 114, 83, 0.20) !important;
+  box-shadow: 0 8px 20px rgba(14, 91, 72, 0.10) !important;
+}
+
+.app-brand-icon svg {
+  color: var(--asg-brand) !important;
+  font-size: 26px !important;
+}
+
+.app-brand-title {
+  color: var(--asg-text) !important;
+  font-size: clamp(1rem, 1.2vw, 1.22rem) !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+}
+
+.app-surface {
+  width: min(100%, 760px) !important;
+  margin: 0 !important;
+  padding: clamp(28px, 3.4vw, 40px) !important;
+  border: 1px solid var(--asg-line) !important;
+  border-radius: 12px !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.985), rgba(245, 254, 251, 0.94)),
+    #fbfffd !important;
+  box-shadow: var(--asg-shadow) !important;
+}
+
+.app-surface::before,
+.legal-page .MuiContainer-root::before {
+  width: 66px !important;
+  height: 5px !important;
+  margin: 0 0 24px !important;
+  border-radius: 999px !important;
+  background: #199364 !important;
+}
+
+.app-surface .subpage-content {
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+.subpage-content h2,
+.legal-panel h1,
+.login-page .h-display {
+  color: var(--asg-text) !important;
+  letter-spacing: 0 !important;
+}
+
+.subpage-content h2 {
+  font-size: clamp(1.18rem, 1.65vw, 1.42rem) !important;
+  font-weight: 850 !important;
+}
+
+.subpage-content .h-eyebrow,
+.login-page .h-eyebrow {
+  color: rgba(7, 60, 44, 0.55) !important;
+  letter-spacing: 0.06em !important;
+}
+
+.subpage-content p,
+.subpage-content .MuiTypography-root,
+.legal-content {
+  color: var(--asg-muted);
+}
+
+.subpage-content .MuiIconButton-root,
+.legal-page .MuiIconButton-root {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(12, 114, 83, 0.14) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+  color: var(--asg-brand) !important;
+  transition: transform 0.16s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.subpage-content .MuiIconButton-root:hover,
+.legal-page .MuiIconButton-root:hover {
+  border-color: rgba(12, 114, 83, 0.32) !important;
+  background: var(--asg-brand-soft) !important;
+  box-shadow: 0 8px 18px rgba(14, 91, 72, 0.08) !important;
+}
+
+.subpage-content .MuiIconButton-root:active,
+.legal-page .MuiIconButton-root:active {
+  transform: scale(0.96);
+}
+
+.subpage-content .MuiButton-root,
+.login-card .MuiButton-root {
+  border-radius: 10px !important;
+  font-family: inherit !important;
+  letter-spacing: 0 !important;
+  transition: transform 0.14s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.subpage-content .MuiButton-root:not(.btn-gold):not(.Mui-disabled) {
+  box-shadow: none !important;
+}
+
+.subpage-content .MuiButton-root:not(.btn-gold):active,
+.login-card .MuiButton-root:active {
+  transform: scale(0.975);
+}
+
+.btn-gold {
+  border-radius: 10px !important;
+  background: linear-gradient(180deg, #c6a052 0%, #a77f2e 100%) !important;
+  box-shadow: 0 8px 22px rgba(168, 128, 47, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+}
+
+.glass-hero,
+.vip-hero,
+.history-page [role='button'],
+.history-detail-page [style*='border-left'],
+.payments-page .MuiBox-root:has(> .MuiStack-root),
+.profile-page button {
+  border-radius: 12px !important;
+}
+
+.glass-hero {
+  border: 1px solid var(--asg-line) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(238, 251, 247, 0.84)),
+    #fbfffd !important;
+  box-shadow: 0 12px 30px rgba(14, 91, 72, 0.08) !important;
+}
+
+.vip-hero {
+  border: 1px solid rgba(176, 138, 62, 0.24) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 252, 243, 0.99), rgba(250, 241, 215, 0.92)),
+    #fff8e8 !important;
+  box-shadow: 0 12px 30px rgba(176, 138, 62, 0.10) !important;
+}
+
+.billing-page [role='radio'],
+.history-page [role='button'],
+.history-detail-page .MuiStack-root > .MuiBox-root,
+.profile-page button,
+.payments-page .MuiStack-root > .MuiBox-root {
+  border-color: var(--asg-line) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.985), rgba(245, 254, 251, 0.92)),
+    #fbfffd !important;
+  box-shadow: 0 8px 22px rgba(14, 91, 72, 0.055) !important;
+}
+
+.billing-page [role='radio'][aria-checked='true'] {
+  border-color: rgba(176, 138, 62, 0.48) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 251, 239, 0.99), rgba(250, 241, 215, 0.94)),
+    #fff8e8 !important;
+  box-shadow: 0 12px 28px rgba(176, 138, 62, 0.14) !important;
+}
+
+.billing-page [role='radio']:hover,
+.history-page [role='button']:hover,
+.profile-page button:hover {
+  border-color: rgba(12, 114, 83, 0.34) !important;
+  box-shadow: 0 14px 30px rgba(14, 91, 72, 0.10) !important;
+}
+
+.payments-page .MuiStack-root > .MuiBox-root {
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.payments-page .MuiBox-root:has(> .MuiStack-root) {
+  border-color: var(--asg-line) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.985), rgba(245, 254, 251, 0.92)),
+    #fbfffd !important;
+  box-shadow: 0 8px 22px rgba(14, 91, 72, 0.055) !important;
+}
+
+.history-page .MuiBox-root:has(> svg):not(.MuiIconButton-root),
+.payments-page .MuiBox-root:has(> svg):not(.MuiIconButton-root) {
+  border: 1px solid rgba(12, 114, 83, 0.14);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(238, 251, 247, 0.78)),
+    #fbfffd !important;
+}
+
+.login-card,
+.legal-panel {
+  border: 1px solid var(--asg-line) !important;
+  border-radius: 12px !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.985), rgba(245, 254, 251, 0.94)),
+    #fbfffd !important;
+  box-shadow: var(--asg-shadow) !important;
+}
+
+.login-card .MuiOutlinedInput-root {
+  border-radius: 10px !important;
+}
+
+.login-card .MuiOutlinedInput-root fieldset {
+  border-color: rgba(12, 114, 83, 0.18) !important;
+}
+
+.login-card .MuiOutlinedInput-root:hover fieldset {
+  border-color: rgba(12, 114, 83, 0.34) !important;
+}
+
+.login-card .MuiOutlinedInput-root.Mui-focused {
+  box-shadow: 0 0 0 3px rgba(12, 114, 83, 0.10) !important;
+}
+
+.login-card .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: var(--asg-brand) !important;
+}
+
+.legal-content h1,
+.legal-content h2,
+.legal-content h3 {
+  color: var(--asg-text);
+  letter-spacing: 0;
+}
+
+.legal-content img {
+  border: 1px solid var(--asg-line);
+}
+
+.app-page > .home-bottom-nav,
+.home-redesign-page .home-mobile-nav .home-bottom-nav {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  border-color: rgba(12, 114, 83, 0.14) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 -6px 20px rgba(15, 20, 25, 0.05) !important;
+}
+
+.home-nav-item {
+  color: #82909b !important;
+}
+
+.home-nav-item.is-active {
+  color: var(--asg-brand, #0b7655) !important;
+}
+
+.home-nav-item.is-active::after {
+  background: var(--asg-brand, #0b7655) !important;
+}
+
+@media (min-width: 960px) {
+  .login-page.asg-subpage-bg {
+    align-items: flex-start;
+  }
+
+  .login-page.asg-subpage-bg .MuiContainer-root,
+  .legal-page.asg-subpage-bg .MuiContainer-root {
+    margin-left: clamp(38px, 5vw, 72px) !important;
+    margin-right: auto !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-page.asg-subpage-bg,
+  .login-page.asg-subpage-bg,
+  .legal-page.asg-subpage-bg {
+    background: #fff;
+  }
+
+  .app-page.asg-subpage-bg::before,
+  .login-page.asg-subpage-bg::before,
+  .legal-page.asg-subpage-bg::before {
+    display: none;
+  }
+
+  .app-page.asg-subpage-bg::after,
+  .login-page.asg-subpage-bg::after,
+  .legal-page.asg-subpage-bg::after {
+    background: linear-gradient(180deg, rgba(238, 251, 247, 0.86) 0%, rgba(255, 255, 255, 0) 238px);
+  }
+
+  .app-container {
+    padding: 0 18px 100px !important;
+  }
+
+  .app-topbar {
+    min-height: 70px !important;
+    margin: 0 -18px 22px !important;
+    padding: 0 18px !important;
+    border-width: 0 0 1px !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .app-brand-icon {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .app-brand-icon svg {
+    font-size: 22px !important;
+  }
+
+  .app-brand-title {
+    font-size: 0.96rem !important;
+  }
+
+  .app-surface {
+    width: 100% !important;
+    padding: 18px !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+  }
+
+  .app-surface::before,
+  .legal-page .MuiContainer-root::before {
+    width: 50px !important;
+    height: 4px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .subpage-content h2 {
+    font-size: 1.1rem !important;
+  }
+
+  .billing-page [role='radio'],
+  .history-page [role='button'],
+  .history-detail-page .MuiStack-root > .MuiBox-root,
+  .profile-page button {
+    box-shadow: none !important;
+  }
+
+  .login-page.asg-subpage-bg {
+    padding-top: 28px !important;
+    padding-inline: 18px !important;
+  }
+
+  .login-card,
+  .legal-panel {
+    box-shadow: none !important;
+  }
+
+  .legal-page.asg-subpage-bg {
+    padding-inline: 18px !important;
+  }
+
+  .app-page > .home-bottom-nav,
+  .home-redesign-page .home-mobile-nav .home-bottom-nav {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 78px !important;
+    min-height: 78px !important;
+    border-width: 1px 0 0 !important;
+    border-radius: 0 !important;
+    transform: none !important;
+  }
+}
