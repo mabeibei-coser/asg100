@@ -76,6 +76,7 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
               </Box>
             </Box>
             <Button
+              variant="contained"
               onClick={onBuy}
               disableElevation
               className="btn-gold"
@@ -121,6 +122,7 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
             隐患台账下载、识别历史回看、全部安防文档 — 一次开通全部解锁
           </Box>
           <Button
+            variant="contained"
             onClick={onBuy}
             disableElevation
             fullWidth

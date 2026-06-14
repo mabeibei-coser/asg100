@@ -276,6 +276,7 @@ export default function Billing({ onPaid, onBack }) {
 
       {/* CTA：金色付费按钮 */}
       <Button
+        variant="contained"
         fullWidth
         onClick={handlePay}
         disabled={!selected || loading}
