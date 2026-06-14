@@ -85,7 +85,7 @@ export default function History({ onBack, onBuy, isVip }) {
   // 签名 URL 跨进程友好：用户用「在浏览器中打开」跳到外部浏览器也能下载，不必重登。
   const handleDownload = () => {
     if (!isVip) {
-      setSnack({ open: true, msg: '开通 VIP 后可下载台账', severity: 'warning', withBuy: true });
+      onBuy?.();
       return;
     }
     if (downloading) return;
