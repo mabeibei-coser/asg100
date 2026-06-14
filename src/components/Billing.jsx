@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Button, Alert, CircularProgress, IconButton, Stack } from '@mui/material';
+import { Box, Button, Alert, CircularProgress, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
@@ -16,13 +14,6 @@ const perMonth = (cents, days) => {
   const months = Math.max(1, days / 30);
   return `¥${(cents / 100 / months).toFixed(0)}/月`;
 };
-// 顶部 eyebrow 显示用户访问当天日期（2026.06.11 格式）
-const todayLabel = () => {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
-};
-
 /**
  * 开通 VIP 页：展示套餐 → 选中 → 调起微信支付。
  * 微信内走真 JSAPI；非微信环境（本地/桌面）走 fake mode + mock-paid 联调。
@@ -111,10 +102,7 @@ export default function Billing({ onPaid, onBack }) {
 
   return (
     <Box className="subpage-content billing-page" sx={{ maxWidth: 540, mx: 'auto' }}>
-      {/* 统一页眉：eyebrow + 大标题 + 渐变下划线 */}
       <PageHead
-        eyebrow="ASG VIP"
-        eyebrowIcon={<WorkspacePremiumIcon sx={{ fontSize: 13 }} />}
         title="选择套餐"
         onBack={onBack}
       />
@@ -124,8 +112,8 @@ export default function Billing({ onPaid, onBack }) {
         mb: 1.5,
         display: 'flex',
         flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: { xs: 1.4, sm: 2.5 },
+        justifyContent: { xs: 'flex-start', sm: 'center' },
+        gap: { xs: 1.1, sm: 2 },
         rowGap: 0.75,
       }}>
         <Trust icon={<LockOutlinedIcon sx={{ fontSize: 14 }} />} text="微信支付加密" />
@@ -133,12 +121,9 @@ export default function Billing({ onPaid, onBack }) {
         <Trust icon={<VerifiedOutlinedIcon sx={{ fontSize: 14 }} />} text="10万+会员" />
       </Box>
 
-      {/* 套餐选择：选中态金色光晕，"推荐"badge 更醒目 */}
-      <Stack spacing={1.25} sx={{ mb: 2.5 }}>
+      <Stack spacing={0.85} sx={{ mb: 2 }}>
         {packages.map((p) => {
           const active = selected === p.id;
-          // 有 badge 就用顶部 ribbon 醒目展示（"超值推荐"/"限时5折"等都走这条路径）。
-          const isRecommended = Boolean(p.badge);
           return (
             <Box
               key={p.id}
@@ -149,53 +134,37 @@ export default function Billing({ onPaid, onBack }) {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(p.id); } }}
               sx={{
                 position: 'relative',
-                p: { xs: 1.35, sm: 2 },
-                pl: { xs: 1.45, sm: 2.25 },
+                p: { xs: 1.15, sm: 1.35 },
+                pl: { xs: 1.25, sm: 1.45 },
+                minHeight: 64,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                gap: 1.25,
                 cursor: 'pointer',
-                borderRadius: 'var(--r-md)',
+                borderRadius: '10px',
                 background: active
-                  ? 'linear-gradient(180deg, #fff7e3 0%, #fdf2d4 100%)'
+                  ? 'linear-gradient(90deg, #fffaf0 0%, #fff5dd 100%)'
                   : 'var(--bg-elev)',
-                border: '1.5px solid',
-                borderColor: active ? 'var(--gold)' : 'var(--line)',
+                border: '1px solid',
+                borderColor: active ? 'rgba(176, 138, 62, 0.58)' : 'var(--line)',
                 boxShadow: active
-                  ? '0 8px 22px rgba(176, 138, 62, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
-                  : 'var(--shadow-sm)',
+                  ? '0 6px 16px rgba(176, 138, 62, 0.10)'
+                  : 'none',
                 transition: 'all .2s cubic-bezier(0.2, 0.7, 0.2, 1)',
                 '&:hover': {
-                  borderColor: active ? 'var(--gold)' : 'rgba(176, 138, 62, 0.40)',
+                  borderColor: active ? 'rgba(176, 138, 62, 0.58)' : 'rgba(12, 114, 83, 0.26)',
                   transform: active ? 'none' : 'translateY(-1px)',
                   boxShadow: active
-                    ? '0 8px 22px rgba(176, 138, 62, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
-                    : '0 6px 14px rgba(15, 118, 110, 0.08)',
+                    ? '0 6px 16px rgba(176, 138, 62, 0.10)'
+                    : '0 6px 14px rgba(15, 118, 110, 0.06)',
                 },
               }}
             >
-              {/* 推荐 ribbon */}
-              {isRecommended && (
-                <Box sx={{
-                  position: 'absolute',
-                  top: -10,
-                  right: 14,
-                  px: 0.85, py: 0.25,
-                  fontSize: '0.62rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.06em',
-                  borderRadius: 'var(--r-xs)',
-                  background: 'linear-gradient(180deg, #c9a050 0%, #a8802f 100%)',
-                  color: '#fff',
-                  boxShadow: '0 4px 10px rgba(168, 128, 47, 0.30)',
-                }}>
-                  {p.badge}
-                </Box>
-              )}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.15, minWidth: 0 }}>
                 <CheckCircleIcon sx={{
                   color: active ? 'var(--gold)' : 'var(--ink-4)',
-                  fontSize: 22,
+                  fontSize: 20,
                   flexShrink: 0,
                   transition: 'color .18s ease',
                 }} />
@@ -204,20 +173,6 @@ export default function Billing({ onPaid, onBack }) {
                     <Box sx={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.3 }}>
                       {p.label.replace(/\s+/g, '')}
                     </Box>
-                    {p.badge && !isRecommended && (
-                      <Box sx={{
-                        px: 0.7, py: 0.15,
-                        fontSize: '0.62rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.04em',
-                        borderRadius: 'var(--r-xs)',
-                        background: 'var(--gold-soft)',
-                        color: 'var(--gold)',
-                        border: '1px solid rgba(176, 138, 62, 0.28)',
-                      }}>
-                        {p.badge}
-                      </Box>
-                    )}
                   </Box>
                   {p.durationDays > 30 && (
                     <Box className="num" sx={{
@@ -230,7 +185,23 @@ export default function Billing({ onPaid, onBack }) {
                   )}
                 </Box>
               </Box>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, minWidth: 92 }}>
+                {p.badge && (
+                  <Box sx={{
+                    mb: 0.35,
+                    px: 0.65,
+                    py: 0.18,
+                    fontSize: '0.6rem',
+                    fontWeight: 750,
+                    lineHeight: 1,
+                    borderRadius: '6px',
+                    background: 'rgba(176, 138, 62, 0.12)',
+                    color: 'var(--gold)',
+                    border: '1px solid rgba(176, 138, 62, 0.20)',
+                  }}>
+                    {p.badge}
+                  </Box>
+                )}
                 <Box className="num" sx={{
                   fontSize: '1.18rem',
                   fontWeight: 800,

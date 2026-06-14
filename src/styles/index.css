@@ -3650,6 +3650,38 @@ body::before {
   box-shadow: 0 14px 30px rgba(14, 91, 72, 0.10) !important;
 }
 
+.billing-page .page-head {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.billing-page .page-head-back {
+  margin-top: 0;
+}
+
+.billing-page .page-head-title {
+  font-size: 1.15rem;
+  font-weight: 780;
+  letter-spacing: 0;
+}
+
+.billing-page .page-head-line,
+.billing-page .page-head-eyebrow {
+  display: none;
+}
+
+.billing-page [role='radio'] {
+  box-shadow: none !important;
+}
+
+.billing-page [role='radio'][aria-checked='true'] {
+  box-shadow: 0 6px 16px rgba(176, 138, 62, 0.10) !important;
+}
+
+.billing-page [role='radio']:hover {
+  box-shadow: 0 6px 14px rgba(14, 91, 72, 0.07) !important;
+}
+
 .payments-page .MuiStack-root > .MuiBox-root {
   box-shadow: none !important;
   background: transparent !important;

@@ -343,7 +343,7 @@ function App() {
         )}
 
         {view !== 'home' && (
-          <Box className={`surface app-surface rise${['profile', 'history'].includes(view) ? ' app-surface-no-mark' : ''}`} component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
+          <Box className={`surface app-surface rise${['billing', 'profile', 'history'].includes(view) ? ' app-surface-no-mark' : ''}`} component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
             {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
             {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} onGoPayments={() => setView('payments')} />}
             {view === 'history' && <History onBack={() => setView('home')} onBuy={() => setView('billing')} isVip={isVip} />}
