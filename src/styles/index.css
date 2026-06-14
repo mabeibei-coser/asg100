@@ -3845,6 +3845,41 @@ body::before {
     -webkit-backdrop-filter: blur(14px) !important;
     transform: translateX(-50%) !important;
   }
+
+  .app-page > .home-bottom-nav .home-nav-item,
+  .home-redesign-page .home-mobile-nav .home-nav-item {
+    position: relative !important;
+    height: 52px !important;
+    min-height: 0 !important;
+    padding: 4px 0 5px !important;
+    gap: 1px !important;
+    font-size: 0.68rem !important;
+    line-height: 1 !important;
+    justify-content: center !important;
+  }
+
+  .app-page > .home-bottom-nav .home-nav-item svg,
+  .home-redesign-page .home-mobile-nav .home-nav-item svg {
+    font-size: 20px !important;
+  }
+
+  .app-page > .home-bottom-nav .home-nav-item span,
+  .home-redesign-page .home-mobile-nav .home-nav-item span {
+    display: block !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+  }
+
+  .app-page > .home-bottom-nav .home-nav-item.is-active::after,
+  .home-redesign-page .home-mobile-nav .home-nav-item.is-active::after {
+    position: absolute !important;
+    left: 50% !important;
+    bottom: 3px !important;
+    width: 22px !important;
+    height: 3px !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+  }
 }
 
 /* ════════════════════════════════════════════════════════
