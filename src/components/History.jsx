@@ -250,8 +250,6 @@ export default function History({ onBack, onBuy, isVip }) {
   return (
     <Box className="subpage-content history-page" sx={{ maxWidth: 540, mx: 'auto' }}>
       <PageHead
-        eyebrow="识别记录"
-        eyebrowIcon={<HistoryIcon sx={{ fontSize: 13 }} />}
         title="我的历史"
         onBack={onBack}
         action={hasItems ? (

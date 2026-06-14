@@ -3981,6 +3981,14 @@ body::before {
   .page-head-title { font-size: 1.34rem; }
 }
 
+.history-page .page-head-title {
+  font-size: 1.28rem;
+}
+
+@media (max-width: 600px) {
+  .history-page .page-head-title { font-size: 1.14rem; }
+}
+
 .app-surface.app-surface-no-mark::before {
   display: none !important;
 }
