@@ -7,6 +7,7 @@ import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PageHead from './PageHead';
+import VipCompareTable from './VipCompareTable';
 
 const fmtDate = (ts) => {
   if (!ts) return '—';
@@ -153,7 +154,7 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         gap: 1.25,
-        mb: 3,
+        mb: 0,
       }}>
         <EntryButton
           icon={<HistoryIcon sx={{ fontSize: 20 }} />}
@@ -166,6 +167,8 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
           onClick={onGoPayments}
         />
       </Box>
+
+      <VipCompareTable />
     </Box>
   );
 }
