@@ -289,6 +289,10 @@ export default function Billing({ onPaid, onBack }) {
           fontWeight: 700,
           borderRadius: 'var(--r-sm)',
           textTransform: 'none',
+          background: 'linear-gradient(180deg, #c6a052 0%, #a77f2e 100%)',
+          color: '#fff',
+          boxShadow: '0 8px 22px rgba(168, 128, 47, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.28)',
+          '&:hover': { background: 'linear-gradient(180deg, #c9a050 0%, #a8802f 100%)' },
         }}
       >
         {loading
