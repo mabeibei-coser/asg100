@@ -3948,3 +3948,7 @@ body::before {
 @media (max-width: 600px) {
   .page-head-title { font-size: 1.34rem; }
 }
+
+.app-surface.app-surface-no-mark::before {
+  display: none !important;
+}

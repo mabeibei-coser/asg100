@@ -343,7 +343,7 @@ function App() {
         )}
 
         {view !== 'home' && (
-          <Box className="surface app-surface rise" component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
+          <Box className={`surface app-surface rise${['profile', 'history'].includes(view) ? ' app-surface-no-mark' : ''}`} component="section" sx={{ p: { xs: 2.5, md: 3.5 } }}>
             {view === 'billing' && <Billing onPaid={handlePaid} onBack={() => setView('home')} />}
             {view === 'profile' && <Profile membership={membership} onBuy={() => setView('billing')} onBack={() => setView('home')} onGoHistory={() => setView('history')} onGoPayments={() => setView('payments')} />}
             {view === 'history' && <History onBack={() => setView('home')} onBuy={() => setView('billing')} isVip={isVip} />}
@@ -351,11 +351,13 @@ function App() {
           </Box>
         )}
 
-        <Box className="app-footer" component="footer" sx={{ textAlign: 'center', mt: 5, pb: 3 }}>
-          <Box sx={{ fontSize: '0.72rem', color: 'var(--ink-3)', letterSpacing: '0.04em' }}>
-            谨世 ASG 人工智能实验室 出品
+        {view !== 'profile' && (
+          <Box className="app-footer" component="footer" sx={{ textAlign: 'center', mt: 5, pb: 3 }}>
+            <Box sx={{ fontSize: '0.72rem', color: 'var(--ink-3)', letterSpacing: '0.04em' }}>
+              谨世 ASG 人工智能实验室 出品
+            </Box>
           </Box>
-        </Box>
+        )}
       </Container>
       <BottomNav
         active={view === 'history' ? 'records' : view === 'home' ? 'home' : 'mine'}

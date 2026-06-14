@@ -32,8 +32,6 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
     <Box className="subpage-content profile-page" sx={{ maxWidth: 540, mx: 'auto' }}>
       {/* 统一页眉：eyebrow + 大标题 + 渐变下划线 */}
       <PageHead
-        eyebrow="会员中心"
-        eyebrowIcon={<WorkspacePremiumIcon sx={{ fontSize: 13 }} />}
         title="个人中心"
         onBack={onBack}
       />
