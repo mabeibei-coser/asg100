@@ -3273,14 +3273,14 @@ body::before {
 }
 
 .subpage-content [role='button'],
-.profile-page button,
+.profile-page button:not(.btn-gold),
 .history-page button,
 .payments-page button {
   transition: transform 0.16s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .subpage-content [role='button']:hover,
-.profile-page button:hover,
+.profile-page button:not(.btn-gold):hover,
 .history-page button:hover,
 .payments-page button:hover {
   box-shadow: 0 12px 28px rgba(14, 91, 72, 0.08);
@@ -3598,7 +3598,7 @@ body::before {
 .history-page [role='button'],
 .history-detail-page [style*='border-left'],
 .payments-page .MuiBox-root:has(> .MuiStack-root),
-.profile-page button {
+.profile-page button:not(.btn-gold) {
   border-radius: 12px !important;
 }
 
@@ -3621,7 +3621,7 @@ body::before {
 .billing-page [role='radio'],
 .history-page [role='button'],
 .history-detail-page .MuiStack-root > .MuiBox-root,
-.profile-page button,
+.profile-page button:not(.btn-gold),
 .payments-page .MuiStack-root > .MuiBox-root {
   border-color: var(--asg-line) !important;
   background:
@@ -3640,7 +3640,7 @@ body::before {
 
 .billing-page [role='radio']:hover,
 .history-page [role='button']:hover,
-.profile-page button:hover {
+.profile-page button:not(.btn-gold):hover {
   border-color: rgba(12, 114, 83, 0.34) !important;
   box-shadow: 0 14px 30px rgba(14, 91, 72, 0.10) !important;
 }
@@ -3805,7 +3805,7 @@ body::before {
   .billing-page [role='radio'],
   .history-page [role='button'],
   .history-detail-page .MuiStack-root > .MuiBox-root,
-  .profile-page button {
+  .profile-page button:not(.btn-gold) {
     box-shadow: none !important;
   }
 

@@ -209,7 +209,7 @@ function EntryButton({ icon, label, onClick }) {
         }}>
           {icon}
         </Box>
-        <Box sx={{ fontSize: '0.9rem', fontWeight: 600, lineHeight: 1.25 }}>
+        <Box sx={{ fontSize: '0.9rem', fontWeight: 600, lineHeight: 1.25, whiteSpace: 'nowrap' }}>
           {label}
         </Box>
       </Box>
