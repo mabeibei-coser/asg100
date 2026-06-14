@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Stack, CircularProgress, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import { fetchLedger } from '../utils/api';
+import PageHead from './PageHead';
 
 const fmtDate = (ts) => {
   if (!ts) return '—';
@@ -24,21 +26,18 @@ export default function Payments({ onBack }) {
 
   return (
     <Box className="subpage-content payments-page" sx={{ maxWidth: 540, mx: 'auto' }}>
-      {/* 顶部返回 + 标题 + 笔数 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-        <IconButton size="small" onClick={onBack} sx={{
-          color: 'var(--ink-3)', mr: 0.5,
-          '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-        }}>
-          <ArrowBackIcon sx={{ fontSize: 18 }} />
-        </IconButton>
-        <h2 className="h-section" style={{ fontSize: '1.15rem' }}>支付记录</h2>
-        {ledger && ledger.length > 0 && (
-          <Box className="num" sx={{ ml: 'auto', fontSize: '0.78rem', color: 'var(--ink-3)' }}>
+      {/* 统一页眉：eyebrow + 大标题 + 渐变下划线 */}
+      <PageHead
+        eyebrow="账单"
+        eyebrowIcon={<ReceiptLongOutlinedIcon sx={{ fontSize: 13 }} />}
+        title="支付记录"
+        onBack={onBack}
+        action={ledger && ledger.length > 0 ? (
+          <Box className="num" sx={{ fontSize: '0.78rem', color: 'var(--ink-3)' }}>
             {ledger.length} 笔
           </Box>
-        )}
-      </Box>
+        ) : null}
+      />
 
       {ledger === null ? (
         <Box sx={{ textAlign: 'center', py: 6 }}>

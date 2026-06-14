@@ -5,7 +5,9 @@ import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DownloadIcon from '@mui/icons-material/Download';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import HistoryIcon from '@mui/icons-material/History';
 import { fetchHistory, fetchHazardDetail, checkLedger, triggerLedgerDownload } from '../utils/api';
+import PageHead from './PageHead';
 
 const fmtTime = (ts) => {
   if (!ts) return '—';
@@ -115,15 +117,12 @@ export default function History({ onBack, onBuy, isVip }) {
   if (detail) {
     return (
       <Box className="subpage-content history-detail-page" sx={{ maxWidth: 540, mx: 'auto' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <IconButton size="small" onClick={() => setDetail(null)} sx={{
-            color: 'var(--ink-3)', mr: 0.5,
-            '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-          }}>
-            <ArrowBackIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-          <h2 className="h-section" style={{ fontSize: '1.15rem' }}>识别详情</h2>
-        </Box>
+        <PageHead
+          eyebrow="识别记录"
+          eyebrowIcon={<HistoryIcon sx={{ fontSize: 13 }} />}
+          title="识别详情"
+          onBack={() => setDetail(null)}
+        />
         <Box sx={{ pl: 4.5, mb: 2 }}>
           <Box sx={{ fontSize: '0.88rem', color: 'var(--ink-2)', mb: 0.5 }}>
             {detail.scenarioLabel} <Box component="span" className="num" sx={{ color: 'var(--ink-3)', ml: 0.5 }}>· {fmtTime(detail.createdAt)}</Box>
@@ -250,16 +249,13 @@ export default function History({ onBack, onBuy, isVip }) {
   const hasItems = items && items.length > 0;
   return (
     <Box className="subpage-content history-page" sx={{ maxWidth: 540, mx: 'auto' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-        <IconButton size="small" onClick={onBack} sx={{
-          color: 'var(--ink-3)', mr: 0.5,
-          '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-        }}>
-          <ArrowBackIcon sx={{ fontSize: 18 }} />
-        </IconButton>
-        <h2 className="h-section" style={{ fontSize: '1.15rem' }}>我的识别历史</h2>
-        {hasItems && (
-          <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1.25 }}>
+      <PageHead
+        eyebrow="识别记录"
+        eyebrowIcon={<HistoryIcon sx={{ fontSize: 13 }} />}
+        title="我的历史"
+        onBack={onBack}
+        action={hasItems ? (
+          <>
             <Box className="num" sx={{ fontSize: '0.78rem', color: 'var(--ink-3)' }}>
               {items.length} 条
             </Box>
@@ -284,9 +280,9 @@ export default function History({ onBack, onBuy, isVip }) {
             >
               下载台账{isVip ? '' : ' · VIP'}
             </Button>
-          </Box>
-        )}
-      </Box>
+          </>
+        ) : null}
+      />
 
       {items === null ? (
         <Box sx={{ textAlign: 'center', py: 5 }}>

@@ -7,6 +7,7 @@ import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import { fetchPackages, createOrder, mockPaid, invokeWechatPay, queryOrder } from '../utils/api';
+import PageHead from './PageHead';
 
 const yuan = (cents) => `¥${(cents / 100).toFixed(2)}`;
 // 计算月均价格，给用户直观感
@@ -121,26 +122,13 @@ export default function Billing({ onPaid, onBack }) {
 
   return (
     <Box className="subpage-content billing-page" sx={{ maxWidth: 540, mx: 'auto' }}>
-      {/* 顶部返回 + 标题 + 日期 */}
-      <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 0.75 }}>
-        <IconButton size="small" onClick={onBack} disabled={loading} sx={{
-          color: 'var(--ink-3)',
-          flexShrink: 0,
-          '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-        }}>
-          <ArrowBackIcon sx={{ fontSize: 18 }} />
-        </IconButton>
-        <Box sx={{
-          flexShrink: 0,
-          fontSize: '0.92rem',
-          fontWeight: 700,
-          color: 'var(--ink)',
-          letterSpacing: '-0.012em',
-          whiteSpace: 'nowrap',
-        }}>
-          选择套餐
-        </Box>
-      </Box>
+      {/* 统一页眉：eyebrow + 大标题 + 渐变下划线 */}
+      <PageHead
+        eyebrow="ASG VIP"
+        eyebrowIcon={<WorkspacePremiumIcon sx={{ fontSize: 13 }} />}
+        title="选择套餐"
+        onBack={onBack}
+      />
 
       {/* 信任元素：微信支付 + 加密 + 即时生效 */}
       <Box sx={{

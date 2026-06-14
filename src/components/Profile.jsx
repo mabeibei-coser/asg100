@@ -6,6 +6,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import PageHead from './PageHead';
 
 const fmtDate = (ts) => {
   if (!ts) return '—';
@@ -28,16 +29,13 @@ export default function Profile({ membership, onBuy, onBack, onGoHistory, onGoPa
 
   return (
     <Box className="subpage-content profile-page" sx={{ maxWidth: 540, mx: 'auto' }}>
-      {/* 顶部返回 + 标题 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-        <IconButton size="small" onClick={onBack} sx={{
-          color: 'var(--ink-3)', mr: 0.5,
-          '&:hover': { color: 'var(--ink)', background: 'var(--bg-mute)' },
-        }}>
-          <ArrowBackIcon sx={{ fontSize: 18 }} />
-        </IconButton>
-        <h2 className="h-section" style={{ fontSize: '1.15rem' }}>个人中心</h2>
-      </Box>
+      {/* 统一页眉：eyebrow + 大标题 + 渐变下划线 */}
+      <PageHead
+        eyebrow="会员中心"
+        eyebrowIcon={<WorkspacePremiumIcon sx={{ fontSize: 13 }} />}
+        title="个人中心"
+        onBack={onBack}
+      />
 
       {/* VIP 状态卡：VIP → 金色 hero（剩余天数 + 续费）；非 VIP → 玻璃卡 + 金色 CTA */}
       {isVip ? (

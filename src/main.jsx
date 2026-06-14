@@ -15,7 +15,8 @@ const theme = createTheme({
     divider: '#e6e6e1',
   },
   typography: {
-    fontFamily: "'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif",
+    // 统一字体走 CSS 变量 --font-base（典雅宋体），与 index.css / 三端保持同源、可一处切换
+    fontFamily: 'var(--font-base)',
     h4: { fontWeight: 700, letterSpacing: '-0.025em' },
     h5: { fontWeight: 650, letterSpacing: '-0.018em' },
     h6: { fontWeight: 600, letterSpacing: '-0.012em' },
