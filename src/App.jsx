@@ -380,15 +380,23 @@ function HomeLanding({ onGoIdentify, onGoResources, onGoHistory, onGoProfile }) 
             <ShieldOutlinedIcon />
             <span>ASG</span>
           </span>
-          <strong>ASG安全隐患识别5.0</strong>
         </div>
         <div className="home-header-version">
           大数据库版本：<span>{currentMonthLabel()}</span>
         </div>
         <nav className="home-desktop-nav" aria-label="桌面导航">
-          <button className="is-active" type="button">首页</button>
-          <button type="button" onClick={onGoHistory}>记录</button>
-          <button type="button" onClick={onGoProfile}>我的</button>
+          <button className="is-active" type="button">
+            <HomeRoundedIcon />
+            <span>首页</span>
+          </button>
+          <button type="button" onClick={onGoHistory}>
+            <HistoryIcon />
+            <span>记录</span>
+          </button>
+          <button type="button" onClick={onGoProfile}>
+            <PersonOutlineOutlinedIcon />
+            <span>我的</span>
+          </button>
         </nav>
       </header>
 

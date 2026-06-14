@@ -3992,3 +3992,100 @@ body::before {
 .app-surface.app-surface-no-mark::before {
   display: none !important;
 }
+
+/* Final homepage detail adjustments from the supplied desktop mockup. */
+.home-redesign-page {
+  grid-template-rows: 100px minmax(0, 1fr) 70px;
+}
+
+.home-desktop-header {
+  height: 100px;
+  gap: 28px;
+  padding: 0 clamp(40px, 3.9vw, 60px);
+}
+
+.home-brand-block {
+  gap: 0;
+}
+
+.home-brand-mark span {
+  left: 50%;
+  top: 50%;
+  font-size: 0.78rem;
+  line-height: 1;
+  letter-spacing: 0;
+  transform: translate(-50%, -46%);
+}
+
+.home-desktop-nav {
+  gap: clamp(52px, 5.2vw, 84px);
+}
+
+.home-desktop-nav button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 92px;
+  height: 100%;
+  padding: 0;
+}
+
+.home-desktop-nav button svg {
+  font-size: 28px;
+}
+
+.home-desktop-nav button::after {
+  bottom: 2px;
+}
+
+.home-desktop-nav button:hover::after,
+.home-desktop-nav button.is-active::after {
+  width: 84px;
+}
+
+.home-legal-footer {
+  font-size: 0.68rem;
+}
+
+@media (min-width: 1180px) {
+  .home-redesign-main {
+    grid-template-columns: minmax(688px, 45.85vw) minmax(0, 1fr);
+  }
+
+  .home-hero-copy {
+    padding: clamp(94px, 10vh, 104px) 0 0 clamp(58px, 3.9vw, 60px);
+  }
+
+  .home-entry-list {
+    gap: 30px;
+    padding: clamp(34px, 4.8vh, 48px) 0 0 clamp(58px, 3.9vw, 60px);
+  }
+
+  .home-entry-card {
+    width: 630px;
+    max-width: calc(100vw - 96px);
+    min-height: 0;
+    aspect-ratio: 630 / 211;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: center / 100% 100% no-repeat;
+    box-shadow: none;
+  }
+
+  .home-entry-card:nth-child(1) {
+    background-image: url('../assets/home-entry-desktop-identify.png');
+  }
+
+  .home-entry-card:nth-child(2) {
+    background-image: url('../assets/home-entry-desktop-docs.png');
+  }
+
+  .home-entry-card > * {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
