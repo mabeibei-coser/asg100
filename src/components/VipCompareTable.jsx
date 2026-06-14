@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 // 普通用户 vs VIP 权限对比。支付页和个人中心共用，避免两处权益文案漂移。
 const COMPARE_ROWS = [
@@ -16,35 +15,15 @@ const COMPARE_ROWS = [
 
 export default function VipCompareTable({ sx }) {
   return (
-    <Box className="vip-hero" sx={{ p: { xs: 2.5, md: 3 }, mt: 3, mb: 2, ...sx }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, position: 'relative', zIndex: 1 }}>
-        <Box sx={{
-          width: 44, height: 44, borderRadius: 'var(--r-sm)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'linear-gradient(180deg, #d6b25c 0%, #a8802f 100%)',
-          color: '#fff',
-          boxShadow: '0 6px 16px rgba(168, 128, 47, 0.32), inset 0 1px 0 rgba(255,255,255,0.28)',
-          flexShrink: 0,
-        }}>
-          <WorkspacePremiumIcon sx={{ fontSize: 24 }} />
-        </Box>
-        <Box>
-          <Box className="h-eyebrow" sx={{ color: 'var(--gold)', mb: 0.4 }}>
-            asg100 vip
-          </Box>
-          <Box className="h-display" sx={{ fontSize: '1.35rem', lineHeight: 1.15 }}>
-            解锁隐患台账与文档库
-          </Box>
-        </Box>
-      </Box>
-
+    <Box sx={{ mt: 3, mb: 1, ...sx }}>
+      <Box className="h-eyebrow" sx={{ mb: 1.25 }}>会员权益对比</Box>
       <Box sx={{
         borderRadius: 'var(--r-sm)',
         border: '1px solid rgba(176, 138, 62, 0.28)',
         background: 'var(--bg-elev)',
         overflow: 'hidden',
-        position: 'relative', zIndex: 1,
       }}>
+        {/* 表头 */}
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: '1.3fr 0.9fr 1.1fr',
