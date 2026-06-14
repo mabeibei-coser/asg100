@@ -2872,7 +2872,7 @@ body::before {
     display: block;
     overflow-x: hidden;
     overflow-y: auto;
-    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+    padding-bottom: calc(86px + env(safe-area-inset-bottom));
     background: #fff;
   }
 
@@ -3115,18 +3115,22 @@ body::before {
 
   .home-redesign-page .home-mobile-nav .home-bottom-nav {
     display: grid;
-    width: 100%;
-    max-width: none;
+    width: min(346px, calc(100vw - 44px));
+    max-width: 346px;
     height: 56px;
     min-height: 56px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-width: 1px 0 0;
-    border-radius: 0;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 -6px 20px rgba(15, 20, 25, 0.05);
-    transform: none;
+    left: 50%;
+    right: auto;
+    bottom: max(18px, env(safe-area-inset-bottom));
+    border-width: 1px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.90);
+    box-shadow:
+      0 14px 32px rgba(15, 118, 110, 0.12),
+      0 2px 8px rgba(15, 20, 25, 0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transform: translateX(-50%);
   }
 
   .home-redesign-page .home-nav-item {
@@ -3712,8 +3716,10 @@ body::before {
 .home-redesign-page .home-mobile-nav .home-bottom-nav {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   border-color: rgba(12, 114, 83, 0.14) !important;
-  background: rgba(255, 255, 255, 0.96) !important;
-  box-shadow: 0 -6px 20px rgba(15, 20, 25, 0.05) !important;
+  background: rgba(255, 255, 255, 0.90) !important;
+  box-shadow:
+    0 14px 32px rgba(15, 118, 110, 0.12),
+    0 2px 8px rgba(15, 20, 25, 0.06) !important;
 }
 
 .home-nav-item {
@@ -3826,16 +3832,18 @@ body::before {
 
   .app-page > .home-bottom-nav,
   .home-redesign-page .home-mobile-nav .home-bottom-nav {
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: max(18px, env(safe-area-inset-bottom)) !important;
+    width: min(346px, calc(100vw - 44px)) !important;
+    max-width: 346px !important;
     height: 56px !important;
     min-height: 56px !important;
-    border-width: 1px 0 0 !important;
-    border-radius: 0 !important;
-    transform: none !important;
+    border-width: 1px !important;
+    border-radius: 18px !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    transform: translateX(-50%) !important;
   }
 }
 
